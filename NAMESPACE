@@ -1,0 +1,8 @@
+export(open-meta-analysis)
+import(rmeta)
+import(RJSONIO)
+import(ggplot2)
+import(httr)
+import(EBImage)
+import(stringr)
+import(reshape2)
