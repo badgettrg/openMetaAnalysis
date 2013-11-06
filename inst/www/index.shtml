@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>open-meta-analysis</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<script src="jquery/jquery-1.9.1.js"> </script>
+
+<!-- ocpu library -->
+<script src="opencpu/opencpu.js"> </script>
+
+<!-- some optional styling stuff -->
+<script src="bootstrap/js/bootstrap.js"> </script>
+<script src="jqueryui/jquery-ui-1.10.3.custom.js"> </script>
+
+<!-- jquery-csv from http://code.google.com/p/jquery-csv/ -->
+<script src="https://jquery-csv.googlecode.com/git/src/jquery.csv.js"></script>
+
+<!-- http://jqueryui.com/dialog/ -->
+<script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+<!-- Ajax.org Cloud9 Editor from http://ace.c9.io/#nav=api&api=editor -->
+<script src="src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- http://www.w3schools.com/jsref/jsref_obj_regexp.asp -->
+
+<script> 
+$(document).ready(function(){
+
+$(function() {
+$( "#dialog" ).dialog();
+});
+
+    if(isAPIAvailable()) {
+      $('#files').bind('change', handleFileSelect);
+    }
+
+  //optional, requires jquery-ui.
+  $("#plotdiv").resizable()
+
+  //For Ajax.org Cloud9 Editor
+  var editor = ace.edit("editor");
+  editor.setTheme("ace/theme/github");
+  editor.getSession().setMode("ace/mode/r");
+  editor.setFontSize("14px");
+  editor.getSession().setUseWrapMode(true);
+  
+  // drawplot
+  function drawplot(){
+    $("#plotbutton").attr("disabled", "disabled")
+	temp = editor.getSession().getValue()
+	//Three replacements below are not required on a local server, but are at https://public.opencpu.org/ocpu/github/
+	temp = temp.replace(/\r?\n/g, '')
+	temp = temp.replace(/\s+$/g, '')
+	temp = temp.replace(/$\s+/g, '')
+	temp = temp.replace(/,$/g, '')
+	var req = $('#target').contents().find('#plotdiv').r_fun_plot("make_charts", {
+	  content: temp,
+	  topic: $("#topic").val(),
+	  outcome: $("#outcome").val(),
+	  counted: $("#counted").val(),
+	  timeperiod: $("#timeperiod").val(),
+	  type: $("#type").val(),
+	  theme : $("#theme").val()
+    }).always(function(){
+      $("#plotbutton").removeAttr("disabled");
+    }).fail(function(){
+      alert("HTTP error " + req.status + ": " + req.responseText);
+    });
+  }
+
+  //button handlers
+  $("#plotbutton").on("click", function(e){
+    e.preventDefault();
+    drawplot();
+  });
+  
+  $("#type").on("change", function(e){
+    e.preventDefault();
+    if ($("#type").val() == "C"){$("#countedshow").css("display","block")}
+	else {$("#countedshow").css("display","none")}
+  });
+
+  $("#addcommas").on("click", function(e){
+    e.preventDefault();
+    temp = editor.getValue()
+	temp = temp.replace(/\n/g, ',\n')
+	temp = temp.replace(/$\s+/g, '')
+	temp = temp.replace(/\s+$/g, '')
+	temp = temp.replace(/ +/g, ', ')
+	temp = temp.replace(/\t/g, ', ')
+	temp = temp + ","
+	temp = temp.replace(/,,/g, ',')
+    editor.setValue(temp,1);
+  });
+
+  $(".example").click(function(){
+	if($(this).val()=="ex_0a") {$("#type").val("R");editor.setValue("1, 26,30, 0,\n2, 24,30, 0,\n3, 25,30, 0\n",1);}
+	if($(this).val()=="ex_0b") {$("#type").val("P");editor.setValue("1, 26,30, 0,\n2, 24,30, 0,\n3, 25,30, 0\n",1);}
+	if($(this).val()=="ex_0c") {$("#type").val("P");editor.setValue("1, 26,30,0,\n2, 28,30,0,\n3, 21,30,0,\n4, 19,30,0,\n5, 17,30,0,\n6, 20,30,0,\n7, 20,30,0,\n8, 17,30,0,\n9, 15,30,0,\n10, 16,30,0,\n11, 15,30,0,\n12, 14,30,0,\n13, 13,30,0,\n14, 12,30,0,\n15, 8,30,0",1);}
+	if($(this).val()=="ex_1a") {$("#type").val("B");editor.setValue("1, 26,30, 0,\n2, 24,30, 0,\n3, 25,30, 0,\n4, 15,30, 1,\n5, 10,30, 1,\n6, 5,30, 1",1);}
+	if($(this).val()=="ex_1b") {$("#type").val("P");editor.setValue("1, 26,30, 0,\n2, 24,30, 0,\n3, 25,30, 0,\n4, 15,30, 1,\n5, 10,30, 1,\n6, 5,30, 1",1);}
+	if($(this).val()=="ex_1c") {$("#type").val("P");editor.setValue("1, 26,30, 0,\n2, 24,30, 0,\n3, 25,30, 0,\n4, 10,30, 1,\n5, 10,30, 1,\n6, 5,30, 1",1);}
+	if($(this).val()=="ex_1d") {$("#type").val("P");editor.setValue("1, 26,30, 0,\n2, 24,30, 0,\n3, 25,30, 0,\n4, 15,30, 1,\n5, 10,30, 1,\n6, 5,30, 1,\n6, 5,30, 1,\n6, 5,30, 1,\n6, 5,30, 1",1);}
+	if($(this).val()=="ex_2a") {$("#type").val("P");editor.setValue("1, 1,1, 0,\n2, 1,1, 0,\n3, 1,1, 0,\n4, 0,1, 0,\n5, 2,3, 0,\n6, 2,5, 0,\n7, 1,4, 0,\n8, 7,8, 1,\n9, 9,19, 1,\n10, 9,20, 1,\n11, 10,23, 1",1);}
+	if($(this).val()=="ex_2b") {$("#type").val("C");editor.setValue("1, 1,1, 0,\n2, 1,1, 0,\n3, 1,1, 0,\n4, 0,1, 0,\n5, 2,3, 0,\n6, 2,5, 0,\n7, 1,4, 0,\n8, 7,8, 1,\n9, 9,19, 1,\n10, 9,20, 1,\n11, 10,23, 1",1);}
+  });
+
+  function isAPIAvailable() {
+    // Check for the various File API support.
+    if (window.File && window.FileReader && window.FileList && window.Blob) {
+      // Great success! All the File APIs are supported.
+      return true;
+    } else {
+      // source: File API availability - http://caniuse.com/#feat=fileapi
+      // source: <output> availability - http://html5doctor.com/the-output-element/
+      document.writeln('The HTML5 APIs used in this form are only available in the following browsers:<br />');
+      // 6.0 File API & 13.0 <output>
+      document.writeln(' - Google Chrome: 13.0 or later<br />');
+      // 3.6 File API & 6.0 <output>
+      document.writeln(' - Mozilla Firefox: 6.0 or later<br />');
+      // 10.0 File API & 10.0 <output>
+      document.writeln(' - Internet Explorer: Not supported (partial support expected in 10.0)<br />');
+      // ? File API & 5.1 <output>
+      document.writeln(' - Safari: Not supported<br />');
+      // ? File API & 9.2 <output>
+      document.writeln(' - Opera: Not supported');
+      return false;
+    }
+  }
+
+  function handleFileSelect(evt) {
+    var files = evt.target.files; // FileList object
+    var file = files[0];
+
+    // read the file contents
+    printTable(file);
+
+  }
+
+  function printTable(file) {
+    var reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = function(event){
+      var csv = event.target.result;
+      var data = $.csv.toArrays(csv);
+      var html = '';
+      for(var row in data) {
+	  if($("#header").val() == "FALSE" || [row] > 0 ){
+        for(var item in data[row]) {
+          html += data[row][item] + ', ';
+        }
+        html += '\r\n';
+      }
+	  }
+      editor.setValue(html,1);
+
+    };
+    
+	reader.onerror = function(){ alert('Unable to read ' + file.fileName); };
+	}
+	
+  //init on start
+  //drawplot();
+  
+});
+</script>
+<style>
+
+#editor { 
+  position: relative;
+  width: 950px;
+  height: 225px;
+}
+    
+#plotdiv {
+  width: 1000px;
+  height: 400px;
+  border: 1px solid #e3e3e3;
+  border-radius: 4px;
+}
+
+#plotbutton{
+  width: 120px;
+  margin-left: 20px;
+}
+
+.twocolumns
+{
+columns:100px 2;
+-webkit-columns:100px 2; /* Safari and Chrome */
+-moz-columns:100px 2; /* Firefox */
+}
+
+</style>
+</head>
+
+<body>
+<!-- 
+http://jquery-csv.googlecode.com/git/examples/basic-usage.html
+http://jquery-csv.googlecode.com/git/examples/flot.html -> seems best and most stable without reticulating spines error
+http://code.google.com/p/jquery-csv/wiki/API -> instructions
+-->
+  <div class="container" style="width:1000px;">
+
+    <div class="page-header">
+      <div style="float:left;color:#0022B4">
+	  <h1>open-meta-analysis</h1>
+	  </div>
+      <span style="float:right"><a href="mailto:rbadgett@kumc.edu">rbadgett@kumc.edu</a></span>
+    </div>
+    <div style="clear:both"></div>
+	
+    <div>
+      <div style="width:500px;float:left">
+
+        <form id="paramform" target="target" style="width:500px;">
+          <fieldset style="border: 3px solid #6DC6E7; background-color: #FFFFFF;width:500px;height:580px;">
+            <legend style="font-weight:bold">Enter inputs</legend>
+            <div>To make either a <a href="https://en.wikipedia.org/wiki/Run_chart">Run chart</a> or <a href="https://en.wikipedia.org/wiki/Control_chart">Control chart</a>, either:</div>
+			<ul>
+			<li>Replace the example data below with your data.</li>
+			<li>Upload a csv file formatted like this <a href="example.csv">example</a>.<br/>
+			<input type=file id=files name=files style="width:200px"/>
+			1st row is column names? <select id="header" name="header"><option value=TRUE> TRUE </option> <option value=FALSE> FALSE </option> </select>
+			</li>
+			</ul>
+<div id="">Five columns: 1) study name, 2) # events in intervention group, 3) total in intervention group, 2) # events in control group, 3) total in control group, 5) cofactor. <br/>
+For trial, 0 = pre-intervention or no trial and 1 = after intervention.<br/>
+Separate columns with commas. <a id="addcommas" href="#">Click here</a> to add commas.</div>
+<div id="editor" style="width:500px;">1, 26,30, 0,
+2, 24,30, 0,
+3, 25,30, 0
+</div>	
+            <br />
+
+            <label>Plot type:</label> 
+            <select id="type" name="type">
+              <option value="R" selected>Run chart</option>
+              <option value="B">Box chart (comparing average proportions)</option>
+              <option value="P">Control chart (proportions)</option>
+              <option value="C">Control chart (counts)</option>
+            </select>
+			<div id="countedshow" style="display:none">
+			<label>Plot:</label>
+            <select id="counted" name="counted">
+              <option value="events" selected>Events</option>
+              <option value="total">Total</option>
+            </select>
+			</div>
+			<br/>
+            <label>Outcome:</label> 
+            <select id="outcome">
+              <option value="nonconforming" selected>nonconforming</option>
+              <option value="conforming">conforming</option>
+            </select>&nbsp;&nbsp;
+			<label>Time period:</label> 			
+            <select id="timeperiod">
+              <option value="Month" selected>Month</option>
+              <option value="Week">Week</option>
+            </select>
+			<br/>
+            <label>Topic (for title - optional):</label> 
+            <input type="text" id="topic" /> 
+            <div style="display:none"><label>Plot logo:</label> 
+            <select id="theme">
+              <option value="white" selected>None</option>
+              <option value="KU">KU</option>
+            </select></div> 
+            <br />
+            <button class="btn btn-small btn-primary" id="plotbutton"><i class="icon-ok icon-white"></i> Update Plot (below)</button>
+          </fieldset>
+        </form>
+      </div>
+      <div style="width:450px;float:right">
+	          <form name="form2" action="#" style="width:450px;">
+          <fieldset style="border: 3px solid #6DC6E7; background-color: #FFFFFF;width:450px;height:580px;">
+		  <legend style="font-weight:bold">Example projects</legend>
+<h3 style="margin-bottom:0px">Baseline data</h3>
+<div><input type="radio" name="example" class="example" value="ex_0a" id="ex_0a" checked /><label for="ex_0a">Baseline data (run chart)</label></div>
+<div><input type="radio" name="example" class="example" value="ex_0b" id="ex_0b"/><label for="ex_0b">Baseline data (p-chart)</label> <i>What does this control chart add to the run chart?</i></div>
+<div><input type="radio" name="example" class="example" value="ex_0c" id="ex_0c"/><label for="ex_0c">Baseline data (p-chart)</label> <i>What do the colored dots, circles, and lines mean on this chart (hint: see infobox below chart)?</i></div>
+<h3 style="margin-bottom:0px">QI project 1: screening performed for depression</h3>
+<div>We now have added 3 months of data after an intervention to increase screening for depression.</div>
+<div><input type="radio" name="example" class="example" value="ex_1a" id="ex_1a"/><label for="ex_1a">First analysis (box chart)</label> <i>What are problems with this analytic approach?</i></div>
+<div><input type="radio" name="example" class="example" value="ex_1b" id="ex_1b"/><label for="ex_1b">Second analysis (p-chart)</label> <i>What does this control chart add to the box chart? What are the significant findings?</i></div>
+<div><input type="radio" name="example" class="example" value="ex_1c" id="ex_1c"/><label for="ex_1c">Another scenario (note the events dropped from 15 to 10 in the 4th row)</label> <i>What is significant if the drop is more abrupt?</i></div>
+<div><input type="radio" name="example" class="example" value="ex_1d" id="ex_1d"/><label for="ex_1d">Another scenario (longer trial)</label> <i>What is significant if the trial is lengthened?</i></div>
+<div><i>What do these simulations say about the rigor of a QI study and its ability to control for coincident interventions?</i></div>
+
+<h3 style="margin-bottom:0px">QI project 2: counseling for smoking cessation</h3>
+<div><input type="radio" name="example" class="example" value="ex_2a" id="ex_2a"/><label for="ex_2a">First analysis (p-chart)</label> <i>Does the intervention help?</i></div>
+<div><input type="radio" name="example" class="example" value="ex_2b" id="ex_2b" /><label for="ex_2b">Second analysis (c-chart)</label> <i>Why do these two charts suggest contradictory interpretations of the same data?</i></div>
+
+	  </fieldset>
+</form>
+	  </form>
+	</div>
+	
+	<div style="clear:both">&nbsp;</div>
+	<iframe id="target" style="width:1000px;height:600px;border: 3px solid #6DC6E7;" name="target" width="700px" height="600px" src="output.html">
+	</iframe>
+	</div>
+
+<div>
+
+
+			<div id="spc-interpretation" style="float:left;display:block;width:400px;border:3px solid #6DC6E7;">
+			<h3>Interpreting control charts</h3>
+			<div id="">This chart will automatically color points <span style="color:red;font-weight:bold">red</span> that fulfill criteria for being signals.</div>
+			<ol>
+				<li>Are all points within the 3-sigma control limits? If so, the process is in control.</li>
+				<li>Is there a signal that an effective change has occurred (if a prior QI effort has been done)?
+					<ul>
+						<li>Astronomical Point - A dramatically different value (<span style="font-weight:bold;color:red">red circles</span>)</li>
+						<li>Shift - 6 or more consecutive points above or below the median (<span style="font-weight:bold;color:orange">orange points</span>)</li>
+						<li>Trend - 5 or more consecutively increasing or decreasing points (<span style="font-weight:bold;color:blue">blue line</span>)</li>
+						<li>Runs - Are there too many or too few for just common cause variation (not implemented)?</li>
+						<li>From: <a href="http://www.ihi.org/knowledge/Pages/Tools/RunChart.aspx">Run Chart Tool</a>. Institute for Health Care Innovation (IHI)</li>
+					</ul>
+				</li>
+				<li>More detail from Wikipedia: <a href="http://en.wikipedia.org/wiki/Control_chart#Rules_for_detecting_signals">Control Charts</a>: <a href="http://en.wikipedia.org/wiki/Western_Electric_rules">Western Electric rules</a> and <a href="http://en.wikipedia.org/wiki/Nelson_rules">Nelson rules</a></li>
+			</ol>
+			</div>
+
+    <div class="row" style="float:right">
+      <div class="span12">
+        <h3>About</h3>
+        <h4>Technical details</h4>
+        <p>This is an OpenCPU application.</p>
+        <table class="table table-striped">
+          <tr><th>Resource</th> <th>link</th></tr>
+          <tr><td>Package Info</td> <td><a href=".." target="blank">link</a></td></tr>       
+          <tr><td>Function Source</td><td><a href="../R/make_charts/print" target="blank">link</a></td><td></tr>
+          <tr><td>Source Code</td><td><a href="https://github.com/badgettrg/qitools" target="blank">link</a></td><td></tr>
+          <tr><td>Help Page (html)</td><td><a href="../man/qitools/html" target="blank">link</a></td><td></tr>
+        </table>
+               
+      </div>
+    </div>
+	<div style="clear:both"></div>
+	</div>
+	
+  </div>
+</body>
+</html>
