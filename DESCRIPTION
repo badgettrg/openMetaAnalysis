@@ -1,0 +1,19 @@
+Package: open-meta-analysis
+Type: open-meta-analysis Application
+Title: open-meta-analysis application for OpenCPU
+Version: 0.1
+Date: 2013-11-05
+Author: Robert Badgett
+Maintainer: Robert Badgett <rbadgett@kumc.edu>
+Description: OpenCPU application for meta-analysis using package rmeta.
+License: GPL
+Imports:
+    ggplot2,
+    httr,
+    RJSONIO,
+    EBImage,
+    stringr,
+    reshape2,
+	rmeta
+Collate:
+    'open-meta-analysis.R'
