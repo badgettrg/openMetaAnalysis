@@ -55,13 +55,12 @@ $( "#dialog" ).dialog();
 	temp = temp.replace(/\s+$/g, '')
 	temp = temp.replace(/$\s+/g, '')
 	temp = temp.replace(/,$/g, '')
-	var req = $('#target').contents().find('#plotdiv').r_fun_plot("make_charts", {
+	var req = $('#target').contents().find('#plotdiv').r_fun_plot("openMetaAnalysis", {
 	  content: temp,
 	  topic: $("#topic").val(),
-	  outcome: $("#outcome").val(),
-	  counted: $("#counted").val(),
-	  timeperiod: $("#timeperiod").val(),
-	  type: $("#type").val(),
+	  lefthand: $("#lefthand").val(),
+	  righthand: $("#righthand").val(),
+	  cofactor: $("#cofactor").val(),
 	  theme : $("#theme").val()
     }).always(function(){
       $("#plotbutton").removeAttr("disabled");
@@ -76,12 +75,6 @@ $( "#dialog" ).dialog();
     drawplot();
   });
   
-  $("#type").on("change", function(e){
-    e.preventDefault();
-    if ($("#type").val() == "C"){$("#countedshow").css("display","block")}
-	else {$("#countedshow").css("display","none")}
-  });
-
   $("#addcommas").on("click", function(e){
     e.preventDefault();
     temp = editor.getValue()
@@ -97,14 +90,6 @@ $( "#dialog" ).dialog();
 
   $(".example").click(function(){
 	if($(this).val()=="ex_0a") {$("#type").val("R");editor.setValue("1, 26,30, 0,\n2, 24,30, 0,\n3, 25,30, 0\n",1);}
-	if($(this).val()=="ex_0b") {$("#type").val("P");editor.setValue("1, 26,30, 0,\n2, 24,30, 0,\n3, 25,30, 0\n",1);}
-	if($(this).val()=="ex_0c") {$("#type").val("P");editor.setValue("1, 26,30,0,\n2, 28,30,0,\n3, 21,30,0,\n4, 19,30,0,\n5, 17,30,0,\n6, 20,30,0,\n7, 20,30,0,\n8, 17,30,0,\n9, 15,30,0,\n10, 16,30,0,\n11, 15,30,0,\n12, 14,30,0,\n13, 13,30,0,\n14, 12,30,0,\n15, 8,30,0",1);}
-	if($(this).val()=="ex_1a") {$("#type").val("B");editor.setValue("1, 26,30, 0,\n2, 24,30, 0,\n3, 25,30, 0,\n4, 15,30, 1,\n5, 10,30, 1,\n6, 5,30, 1",1);}
-	if($(this).val()=="ex_1b") {$("#type").val("P");editor.setValue("1, 26,30, 0,\n2, 24,30, 0,\n3, 25,30, 0,\n4, 15,30, 1,\n5, 10,30, 1,\n6, 5,30, 1",1);}
-	if($(this).val()=="ex_1c") {$("#type").val("P");editor.setValue("1, 26,30, 0,\n2, 24,30, 0,\n3, 25,30, 0,\n4, 10,30, 1,\n5, 10,30, 1,\n6, 5,30, 1",1);}
-	if($(this).val()=="ex_1d") {$("#type").val("P");editor.setValue("1, 26,30, 0,\n2, 24,30, 0,\n3, 25,30, 0,\n4, 15,30, 1,\n5, 10,30, 1,\n6, 5,30, 1,\n6, 5,30, 1,\n6, 5,30, 1,\n6, 5,30, 1",1);}
-	if($(this).val()=="ex_2a") {$("#type").val("P");editor.setValue("1, 1,1, 0,\n2, 1,1, 0,\n3, 1,1, 0,\n4, 0,1, 0,\n5, 2,3, 0,\n6, 2,5, 0,\n7, 1,4, 0,\n8, 7,8, 1,\n9, 9,19, 1,\n10, 9,20, 1,\n11, 10,23, 1",1);}
-	if($(this).val()=="ex_2b") {$("#type").val("C");editor.setValue("1, 1,1, 0,\n2, 1,1, 0,\n3, 1,1, 0,\n4, 0,1, 0,\n5, 2,3, 0,\n6, 2,5, 0,\n7, 1,4, 0,\n8, 7,8, 1,\n9, 9,19, 1,\n10, 9,20, 1,\n11, 10,23, 1",1);}
   });
 
   function isAPIAvailable() {
@@ -218,7 +203,7 @@ http://code.google.com/p/jquery-csv/wiki/API -> instructions
         <form id="paramform" target="target" style="width:500px;">
           <fieldset style="border: 3px solid #6DC6E7; background-color: #FFFFFF;width:500px;height:580px;">
             <legend style="font-weight:bold">Enter inputs</legend>
-            <div>To make either a <a href="https://en.wikipedia.org/wiki/Run_chart">Run chart</a> or <a href="https://en.wikipedia.org/wiki/Control_chart">Control chart</a>, either:</div>
+            <div>To perform a <a href="https://en.wikipedia.org/wiki/Meta-analysis">meta-analysis</a>:</div>
 			<ul>
 			<li>Replace the example data below with your data.</li>
 			<li>Upload a csv file formatted like this <a href="example.csv">example</a>.<br/>
@@ -226,39 +211,42 @@ http://code.google.com/p/jquery-csv/wiki/API -> instructions
 			1st row is column names? <select id="header" name="header"><option value=TRUE> TRUE </option> <option value=FALSE> FALSE </option> </select>
 			</li>
 			</ul>
-<div id="">Five columns: 1) study name, 2) # events in intervention group, 3) total in intervention group, 2) # events in control group, 3) total in control group, 5) cofactor. <br/>
-For trial, 0 = pre-intervention or no trial and 1 = after intervention.<br/>
+<div id="">Five columns: 1) study name, 2) events in intervention group, 3) total in intervention group, 2) events in control group, 3) total in control group, 5) cofactor. <br/>
 Separate columns with commas. <a id="addcommas" href="#">Click here</a> to add commas.</div>
-<div id="editor" style="width:500px;">1, 26,30, 0,
-2, 24,30, 0,
-3, 25,30, 0
+<div id="editor" style="width:500px;">Law, 24, 1762, 20, 1955, 77,
+Lips , 135, 1291, 122, 1287, 54,
+Lyons, 202, 1725, 209, 1715, 80,
+Trivedi , 43, 1345, 62, 1341, 74.3,
+Chapuy, 255, 1176, 308, 1127, 106,
+Chapuy, 97, 393, 55, 190, 77.5,
+Dawson-Hughes, 11, 187, 26, 202, 112,
+Grant, 349, 2649, 341, 2643, 62,
+Harwood, 8, 114, 5, 37, 44,
+Jackson, 2102, 18176, 2158, 18106, 61.4,
+Meyer, 69, 569, 76, 575, 64,
+Pfeifer , 3, 70, 6, 67, 66.1,
+Pfeifer , 9, 121, 16, 121, 84.5,
+Salovaara, 78, 1586, 94, 1609, 74.6,
+Sanders, 171, 1131, 135, 1125, 65,
 </div>	
             <br />
 
-            <label>Plot type:</label> 
-            <select id="type" name="type">
-              <option value="R" selected>Run chart</option>
-              <option value="B">Box chart (comparing average proportions)</option>
-              <option value="P">Control chart (proportions)</option>
-              <option value="C">Control chart (counts)</option>
-            </select>
-			<div id="countedshow" style="display:none">
-			<label>Plot:</label>
-            <select id="counted" name="counted">
-              <option value="events" selected>Events</option>
-              <option value="total">Total</option>
-            </select>
-			</div>
-			<br/>
-            <label>Outcome:</label> 
-            <select id="outcome">
-              <option value="nonconforming" selected>nonconforming</option>
-              <option value="conforming">conforming</option>
+            <label>Cofactor:</label>
+            <select id="cofactor">
+              <option value="ignore" selected>Ignore</option>
+              <option value="subgroup">Subgroup analysis</option>
+              <option value="metaregression">Meta-regression analysis</option>
             </select>&nbsp;&nbsp;
-			<label>Time period:</label> 			
-            <select id="timeperiod">
-              <option value="Month" selected>Month</option>
-              <option value="Week">Week</option>
+			<br/>
+            <label>Left label:</label>
+            <select id="lefthand">
+              <option value="intervention" selected>favors intervention</option>
+              <option value="control">favors control</option>
+            </select>&nbsp;&nbsp;
+			<label>Right label:</label> 			
+            <select id="righthand">
+              <option value="intervention">favors intervention</option>
+              <option value="control"selected>favors control</option>
             </select>
 			<br/>
             <label>Topic (for title - optional):</label> 
@@ -277,22 +265,6 @@ Separate columns with commas. <a id="addcommas" href="#">Click here</a> to add c
 	          <form name="form2" action="#" style="width:450px;">
           <fieldset style="border: 3px solid #6DC6E7; background-color: #FFFFFF;width:450px;height:580px;">
 		  <legend style="font-weight:bold">Example projects</legend>
-<h3 style="margin-bottom:0px">Baseline data</h3>
-<div><input type="radio" name="example" class="example" value="ex_0a" id="ex_0a" checked /><label for="ex_0a">Baseline data (run chart)</label></div>
-<div><input type="radio" name="example" class="example" value="ex_0b" id="ex_0b"/><label for="ex_0b">Baseline data (p-chart)</label> <i>What does this control chart add to the run chart?</i></div>
-<div><input type="radio" name="example" class="example" value="ex_0c" id="ex_0c"/><label for="ex_0c">Baseline data (p-chart)</label> <i>What do the colored dots, circles, and lines mean on this chart (hint: see infobox below chart)?</i></div>
-<h3 style="margin-bottom:0px">QI project 1: screening performed for depression</h3>
-<div>We now have added 3 months of data after an intervention to increase screening for depression.</div>
-<div><input type="radio" name="example" class="example" value="ex_1a" id="ex_1a"/><label for="ex_1a">First analysis (box chart)</label> <i>What are problems with this analytic approach?</i></div>
-<div><input type="radio" name="example" class="example" value="ex_1b" id="ex_1b"/><label for="ex_1b">Second analysis (p-chart)</label> <i>What does this control chart add to the box chart? What are the significant findings?</i></div>
-<div><input type="radio" name="example" class="example" value="ex_1c" id="ex_1c"/><label for="ex_1c">Another scenario (note the events dropped from 15 to 10 in the 4th row)</label> <i>What is significant if the drop is more abrupt?</i></div>
-<div><input type="radio" name="example" class="example" value="ex_1d" id="ex_1d"/><label for="ex_1d">Another scenario (longer trial)</label> <i>What is significant if the trial is lengthened?</i></div>
-<div><i>What do these simulations say about the rigor of a QI study and its ability to control for coincident interventions?</i></div>
-
-<h3 style="margin-bottom:0px">QI project 2: counseling for smoking cessation</h3>
-<div><input type="radio" name="example" class="example" value="ex_2a" id="ex_2a"/><label for="ex_2a">First analysis (p-chart)</label> <i>Does the intervention help?</i></div>
-<div><input type="radio" name="example" class="example" value="ex_2b" id="ex_2b" /><label for="ex_2b">Second analysis (c-chart)</label> <i>Why do these two charts suggest contradictory interpretations of the same data?</i></div>
-
 	  </fieldset>
 </form>
 	  </form>
@@ -307,22 +279,7 @@ Separate columns with commas. <a id="addcommas" href="#">Click here</a> to add c
 
 
 			<div id="spc-interpretation" style="float:left;display:block;width:400px;border:3px solid #6DC6E7;">
-			<h3>Interpreting control charts</h3>
-			<div id="">This chart will automatically color points <span style="color:red;font-weight:bold">red</span> that fulfill criteria for being signals.</div>
-			<ol>
-				<li>Are all points within the 3-sigma control limits? If so, the process is in control.</li>
-				<li>Is there a signal that an effective change has occurred (if a prior QI effort has been done)?
-					<ul>
-						<li>Astronomical Point - A dramatically different value (<span style="font-weight:bold;color:red">red circles</span>)</li>
-						<li>Shift - 6 or more consecutive points above or below the median (<span style="font-weight:bold;color:orange">orange points</span>)</li>
-						<li>Trend - 5 or more consecutively increasing or decreasing points (<span style="font-weight:bold;color:blue">blue line</span>)</li>
-						<li>Runs - Are there too many or too few for just common cause variation (not implemented)?</li>
-						<li>From: <a href="http://www.ihi.org/knowledge/Pages/Tools/RunChart.aspx">Run Chart Tool</a>. Institute for Health Care Innovation (IHI)</li>
-					</ul>
-				</li>
-				<li>More detail from Wikipedia: <a href="http://en.wikipedia.org/wiki/Control_chart#Rules_for_detecting_signals">Control Charts</a>: <a href="http://en.wikipedia.org/wiki/Western_Electric_rules">Western Electric rules</a> and <a href="http://en.wikipedia.org/wiki/Nelson_rules">Nelson rules</a></li>
-			</ol>
-			</div>
+			<h3>Interpreting meta-analyses</h3>
 
     <div class="row" style="float:right">
       <div class="span12">
@@ -332,9 +289,9 @@ Separate columns with commas. <a id="addcommas" href="#">Click here</a> to add c
         <table class="table table-striped">
           <tr><th>Resource</th> <th>link</th></tr>
           <tr><td>Package Info</td> <td><a href=".." target="blank">link</a></td></tr>       
-          <tr><td>Function Source</td><td><a href="../R/make_charts/print" target="blank">link</a></td><td></tr>
-          <tr><td>Source Code</td><td><a href="https://github.com/badgettrg/qitools" target="blank">link</a></td><td></tr>
-          <tr><td>Help Page (html)</td><td><a href="../man/qitools/html" target="blank">link</a></td><td></tr>
+          <tr><td>Function Source</td><td><a href="../R/openMetaAnalysis/print" target="blank">link</a></td><td></tr>
+          <tr><td>Source Code</td><td><a href="https://github.com/badgettrg/openMetaAnalysis" target="blank">link</a></td><td></tr>
+          <tr><td>Help Page (html)</td><td><a href="../man/openMetaAnalysis/html" target="blank">link</a></td><td></tr>
         </table>
                
       </div>
