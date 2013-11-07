@@ -1,4 +1,4 @@
-export(open-meta-analysis)
+export(openMetaAnalysis)
 import(rmeta)
 import(RJSONIO)
 import(ggplot2)
