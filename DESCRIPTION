@@ -1,6 +1,6 @@
-Package: open-meta-analysis
-Type: open-meta-analysis Application
-Title: open-meta-analysis application for OpenCPU
+Package: openMetaAnalysis
+Type: OpenCPU Application
+Title: openMetaAnalysis application for OpenCPU
 Version: 0.1
 Date: 2013-11-05
 Author: Robert Badgett
@@ -11,9 +11,8 @@ Imports:
     ggplot2,
     httr,
     RJSONIO,
-    EBImage,
     stringr,
     reshape2,
 	rmeta
 Collate:
-    'open-meta-analysis.R'
+    'openMetaAnalysis.R'
