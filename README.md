@@ -1,7 +1,7 @@
 openMetaAnalysis
 ==================
 
-You may view and interact with this meta-analysis at [this link] (https://public.opencpu.org/ocpu/github/badgettrg/openMetaAnalysis) at [OpenCPU] (https://public.opencpu.org)
+You may view and interact with this meta-analysis at [this link] (https://public.opencpu.org/ocpu/github/badgettrg/openMetaAnalysis/www) at [OpenCPU] (https://public.opencpu.org)
 
 Why put meta-analyses in this interactive, public format?
 -----------------------------------------------------
