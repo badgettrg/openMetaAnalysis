@@ -60,7 +60,7 @@ $( "#dialog" ).dialog();
 	  topic: $("#topic").val(),
 	  lefthand: $("#lefthand").val(),
 	  righthand: $("#righthand").val(),
-	  cofactor: $("#cofactor").val(),
+	  type: $("#type").val(),
 	  theme : $("#theme").val()
     }).always(function(){
       $("#plotbutton").removeAttr("disabled");
@@ -232,7 +232,7 @@ Sanders, 171, 1131, 135, 1125, 65,
             <br />
 
             <label>Cofactor:</label>
-            <select id="cofactor">
+            <select id="type">
               <option value="ignore" selected>Ignore</option>
               <option value="subgroup">Subgroup analysis</option>
               <option value="metaregression">Meta-regression analysis</option>
