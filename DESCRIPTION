@@ -13,7 +13,7 @@ Imports:
     RJSONIO,
     stringr,
     reshape2,
-    meta
+    meta,
     rmeta
 Collate:
     'openMetaAnalysis.R'
