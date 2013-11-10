@@ -5,7 +5,7 @@ Version: 0.1
 Date: 2013-11-05
 Author: Robert Badgett
 Maintainer: Robert Badgett <rbadgett@kumc.edu>
-Description: OpenCPU application for meta-analysis using packages meta and rmeta.
+Description: OpenCPU application for meta-analysis using package rmeta.
 License: GPL
 Imports:
     ggplot2,
@@ -13,7 +13,8 @@ Imports:
     RJSONIO,
     stringr,
     reshape2,
-    meta,
-    rmeta
+    grid,
+	meta,
+	rmeta
 Collate:
     'openMetaAnalysis.R'
