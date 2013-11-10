@@ -60,6 +60,7 @@ $( "#dialog" ).dialog();
 	  topic: $("#topic").val(),
 	  lefthand: $("#lefthand").val(),
 	  righthand: $("#righthand").val(),
+	  package: $("#package").val(),
 	  type: $("#type").val(),
 	  theme : $("#theme").val()
     }).always(function(){
@@ -211,7 +212,7 @@ http://code.google.com/p/jquery-csv/wiki/API -> instructions
 			1st row is column names? <select id="header" name="header"><option value=TRUE> TRUE </option> <option value=FALSE> FALSE </option> </select>
 			</li>
 			</ul>
-<div id="">Five columns: 1) study name, 2) events in intervention group, 3) total in intervention group, 2) events in control group, 3) total in control group, 5) cofactor. <br/>
+<div id="">Six columns: 1) study name, 2) events in intervention group, 3) total in intervention group, 4) events in control group, 5) total in control group, 6) cofactor. <br/>
 Separate columns with commas. <a id="addcommas" href="#">Click here</a> to add commas.</div>
 <div id="editor" style="width:500px;">Law, 24, 1762, 20, 1955, 77,
 Lips , 135, 1291, 122, 1287, 54,
@@ -231,6 +232,11 @@ Sanders, 171, 1131, 135, 1125, 65,
 </div>	
             <br />
 
+            <label>Package:</label>
+            <select id="package">
+              <option value="rmeta" selected>rmeta (works)</option>
+              <option value="meta">meta (crashes)</option>
+            </select>&nbsp;&nbsp;
             <label>Cofactor:</label>
             <select id="type">
               <option value="ignore" selected>Ignore</option>
