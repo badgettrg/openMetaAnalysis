@@ -37,7 +37,6 @@ if (package=="rmeta")
 	}
 else
 	{
-	dev.new(width=10, height=7)
 	meta1 <- metabin(exp_events, exp_total, control_events,control_total,
 	data=myframe, sm="OR", method="I",
 	studlab=paste(Study))
