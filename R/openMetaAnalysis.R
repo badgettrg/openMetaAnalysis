@@ -21,7 +21,7 @@ attach(myframe)
 KUBlue = "#0022B4"
 SkyBlue = "#6DC6E7"
 #par(col.axis="black" ,col.lab=KUBlue ,col.main=KUBlue ,col.sub=KUBlue, col=KUBlue,new = TRUE) #bg=SkyBlue)
-if (size=="rmeta")
+if (package=="rmeta")
 	{
 	meta_OR <- meta.DSL(exp_total, control_total, exp_events, control_events, data=myframe, names=Study)
 	tabletext<-cbind(c(NA,meta_OR$names,NA,"Summary","Heterogeneity p-value"),
