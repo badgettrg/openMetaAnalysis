@@ -37,9 +37,15 @@ if (package=="rmeta")
 	}
 else
 	{
-	meta1 <- metabin(exp_events, exp_total, control_events,control_total,
-	data=myframe, sm="OR", method="I",
-	studlab=paste(Study))
+	#dev.new(width=10, height=7)
+	if (type=="ignore")
+		{
+		meta1 <- metabin(exp_events, exp_total, control_events,control_total, data=myframe, sm="OR", method="I", studlab=paste(Study))
+		}
+	if (type=="subgroup")
+		{
+		meta1 <- metabin(exp_events, exp_total, control_events,control_total, data=myframe, sm="OR", method="I", studlab=paste(Study),byvar=cofactor)
+		}
 	#forest(meta1, leftcols="studlab",rightcols=FALSE, xlim=c(0.1, 10),ff.hetstat="plain",col.diamond="blue", col.diamond.lines="blue",comb.fixed=FALSE,print.tau2=FALSE)
 	forest(meta1, xlim=c(0.1, 10),ff.hetstat="plain",col.diamond="blue", col.diamond.lines="blue",comb.fixed=FALSE,print.tau2=FALSE)
 	}
