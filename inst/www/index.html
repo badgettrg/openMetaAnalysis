@@ -56,12 +56,12 @@ $( "#dialog" ).dialog();
 	temp = temp.replace(/$\s+/g, '')
 	temp = temp.replace(/,$/g, '')
 	var req = $('#target').contents().find('#plotdiv').r_fun_plot("openMetaAnalysis", {
+	  type: $("#type").val(),
+	  cofactorlabel: $("#cofactorlabel").val(),
 	  content: temp,
 	  topic: $("#topic").val(),
 	  lefthand: $("#lefthand").val(),
 	  righthand: $("#righthand").val(),
-	  package: $("#package").val(),
-	  type: $("#type").val(),
 	  theme : $("#theme").val()
     }).always(function(){
       $("#plotbutton").removeAttr("disabled");
@@ -74,6 +74,26 @@ $( "#dialog" ).dialog();
   $("#plotbutton").on("click", function(e){
     e.preventDefault();
     drawplot();
+  });
+
+  $("#showeditor").on("click", function(e){
+    e.preventDefault();
+    if ($("#editorcontainer").css("display") == "none"){
+		$("#editorcontainer").css("display","block")
+		$("#target").css("display","block")
+		$("#introduction").css("display","none")
+		}
+	else {
+		$("#introduction").css("display","block")
+		$("#editorcontainer").css("display","none")
+		$("#target").css("display","none")
+	}
+  });
+
+  $("#type").on("change", function(e){
+    e.preventDefault();
+    if ($("#type").val() == "metaregression"){$("#cofactorlabel").css("display","block")}
+	else {$("#cofactorlabel").css("display","none")}
   });
   
   $("#addcommas").on("click", function(e){
@@ -150,6 +170,19 @@ $( "#dialog" ).dialog();
   //init on start
   //drawplot();
   
+	//Ajax
+	//http://api.jquery.com/jQuery.getJSON/
+	//http://api.jquery.com/jQuery.ajax/
+    //$.ajax({
+		// you will need to replace this URL with the URL to your CSV file.
+		//url: '/ocpu/github/badgettrg/openMetaAnalysis/www/data.csv',
+		//dataType: 'json',
+		//done: function (data) {
+			//alert('success')
+			//printTable(data)
+		//}
+	//});
+  
 });
 </script>
 <style>
@@ -191,28 +224,29 @@ http://code.google.com/p/jquery-csv/wiki/API -> instructions
   <div class="container" style="width:1000px;">
 
     <div class="page-header">
-      <div style="float:left;color:#0022B4">
-	  <h1>open-meta-analysis</h1>
+      <div style="color:#0022B4">
+	  <h1>openMetaAnalysis:</h1>
 	  </div>
-      <span style="float:right"><a href="mailto:rbadgett@kumc.edu">rbadgett@kumc.edu</a></span>
-    </div>
-    <div style="clear:both"></div>
-	
-    <div>
-      <div style="width:500px;float:left">
+	<div id=""><a id="showeditor" href="#">Edit or update this analysis</a>. Avoid outdated(<a href="#17638714">1</a>) and overlapping(<a href="#23873947">2</a>) meta-analyses. The source code for this analysis may be edited or copied and is located at <a href="https://github.com/badgettrg/openMetaAnalysis">GitHub</a>. GitHub supports linking between alternative or competing analyses.</div>
+	<div id="">&nbsp;</div>
+	  <div id="introduction">This example meta-analysis of trials of Vitamin D for the prevention of fractures suggests that Vitamin D can reduce the incidence of fractures when it is taken in effective doses that its serum raise the level by at least 20 ng/ml and achieve a final level of at least 60 ng/ml. <img src="baseline.png" style="display:inline;"/></div>
+	  </div>
+
+	  <div id="editorcontainer" style="display:none">
+      <div style="width:500px;float:left;">
 
         <form id="paramform" target="target" style="width:500px;">
           <fieldset style="border: 3px solid #6DC6E7; background-color: #FFFFFF;width:500px;height:580px;">
             <legend style="font-weight:bold">Enter inputs</legend>
             <div>To perform a <a href="https://en.wikipedia.org/wiki/Meta-analysis">meta-analysis</a>:</div>
 			<ul>
-			<li>Replace the example data below with your data.</li>
+			<li>Revise or replace the example data below as needed or</li>
 			<li>Upload a csv file formatted like this <a href="example.csv">example</a>.<br/>
 			<input type=file id=files name=files style="width:200px"/>
 			1st row is column names? <select id="header" name="header"><option value=TRUE> TRUE </option> <option value=FALSE> FALSE </option> </select>
 			</li>
 			</ul>
-<div id="">Six columns: 1) study name, 2) events in intervention group, 3) total in intervention group, 4) events in control group, 5) total in control group, 6) cofactor. <br/>
+<div id="">Seven columns: 1) study name, 2) events in intervention group, 3) total in intervention group, 4) events in control group, 5) total in control group, 6) cofactor. <br/>
 Separate columns with commas. <a id="addcommas" href="#">Click here</a> to add commas.</div>
 <div id="editor" style="width:500px;">Law, 24, 1762, 20, 1955, 77,
 Lips , 135, 1291, 122, 1287, 54,
@@ -232,18 +266,16 @@ Sanders, 171, 1131, 135, 1125, 65,
 </div>	
             <br />
 
-            <label>Package:</label>
-            <select id="package">
-              <option value="meta" selected>meta (detailed)</option>
-              <option value="rmeta">rmeta (brief)</option>
-            </select>&nbsp;&nbsp;
-            <label>Cofactor:</label>
-            <select id="type">
-              <option value="ignore" selected>Ignore</option>
+            <div>
+			<select id="type">
+              <option value="ignore" selected>Ignore cofactor/subgroup</option>
               <option value="subgroup">Subgroup analysis</option>
               <option value="metaregression">Meta-regression analysis</option>
             </select>&nbsp;&nbsp;
-			<br/>
+            <input type="text" id="cofactorlabel" value="Label for cofactor" style="display:none;width:250px;float:right"/> 
+			</div>
+			<div>&nbsp;</div>
+            <div>
             <label>Left label:</label>
             <select id="lefthand">
               <option value="intervention" selected>favors intervention</option>
@@ -254,15 +286,15 @@ Sanders, 171, 1131, 135, 1125, 65,
               <option value="intervention">favors intervention</option>
               <option value="control"selected>favors control</option>
             </select>
-			<br/>
+			</div>
+            <div>
             <label>Topic (for title - optional):</label> 
-            <input type="text" id="topic" /> 
-            <div style="display:none"><label>Plot logo:</label> 
-            <select id="theme">
-              <option value="white" selected>None</option>
+            <input type="text" id="topic" style="float:right;width:250px"/> 
+            <select id="theme" style="display:none">
+              <option value="white" selected>None theme</option>
               <option value="KU">KU</option>
-            </select></div> 
-            <br />
+            </select>
+			</div> 
             <button class="btn btn-small btn-primary" id="plotbutton"><i class="icon-ok icon-white"></i> Update Plot (below)</button>
           </fieldset>
         </form>
@@ -270,41 +302,31 @@ Sanders, 171, 1131, 135, 1125, 65,
       <div style="width:450px;float:right">
 	          <form name="form2" action="#" style="width:450px;">
           <fieldset style="border: 3px solid #6DC6E7; background-color: #FFFFFF;width:450px;height:580px;">
-		  <legend style="font-weight:bold">Example projects</legend>
+		  <legend style="font-weight:bold">Alternative analyses</legend>
+			<h3 style="margin-bottom:0px">Subgroups</h3>
+			<div><input type="radio" name="example" class="example" value="ex_0a" id="ex_0a" checked /><label for="ex_0a">Include all studies; no subgroups (<a href="">source data at GitHub</a>)</label></div>
+			<div><input type="radio" name="example" class="example" value="ex_0b" id="ex_0b"/><label for="ex_0b">Subgroup</label></div>
+			<h3 style="margin-bottom:0px">Meta-regressions</h3>
+			<div><input type="radio" name="example" class="example" value="ex_0c" id="ex_0c"/><label for="ex_0c">Meta-regression of final Vitamin D level</label></div>
+			<div><input type="radio" name="example" class="example" value="ex_0c" id="ex_0c"/><label for="ex_0c">Meta-regression of change in Vitamin D level</label></div>
 	  </fieldset>
 </form>
-	  </form>
 	</div>
 	
 	<div style="clear:both">&nbsp;</div>
-	<iframe id="target" style="width:1000px;height:600px;border: 3px solid #6DC6E7;" name="target" width="700px" height="600px" src="output.html">
-	</iframe>
-	</div>
-
-<div>
-
-
-			<div id="spc-interpretation" style="float:left;display:block;width:400px;border:3px solid #6DC6E7;">
-			<h3>Interpreting meta-analyses</h3>
-
-    <div class="row" style="float:right">
-      <div class="span12">
-        <h3>About</h3>
-        <h4>Technical details</h4>
-        <p>This is an OpenCPU application.</p>
-        <table class="table table-striped">
-          <tr><th>Resource</th> <th>link</th></tr>
-          <tr><td>Package Info</td> <td><a href=".." target="blank">link</a></td></tr>       
-          <tr><td>Function Source</td><td><a href="../R/openMetaAnalysis/print" target="blank">link</a></td><td></tr>
-          <tr><td>Source Code</td><td><a href="https://github.com/badgettrg/openMetaAnalysis" target="blank">link</a></td><td></tr>
-          <tr><td>Help Page (html)</td><td><a href="../man/openMetaAnalysis/html" target="blank">link</a></td><td></tr>
-        </table>
-               
-      </div>
-    </div>
-	<div style="clear:both"></div>
 	</div>
 	
-  </div>
+	<iframe id="target" style="width:1000px;height:600px;border: 3px solid #6DC6E7;display:none" name="target" width="700px" height="600px" src="output.html">
+	</iframe>
+<h3>References</h3>
+<div>
+<ol>
+<li><a name="23873947"></a>Siontis KC, Hernandez-Boussard T, Ioannidis JP. Overlapping meta-analyses on the same topic: survey of published studies. BMJ. 2013. doi: <a href="http://dx.doi.org/10.1136/bmj.f4501">10.1136/bmj.f4501</a>. PubMed PMID: <a href="http://pubmed.gov/23873947">23873947</a>; PubMed Central PMCID: <a href="http://pubmedcentral.gov/PMC3716360">PMC3716360</a>.</li>
+<li><a name="17638714"></a>Shojania KG, Sampson M, Ansari MT, Ji J, Doucette S, Moher D. How quickly do systematic reviews go out of date? A survival analysis. Ann Intern Med. 2007. Epub 2007 Jul 16. PubMed PMID: <a href="http://pubmed.gov/17638714">17638714</a>.</li>
+</ol>
+
+
+</div>
+<span style="float:right"><a href="mailto:rbadgett@kumc.edu">rbadgett@kumc.edu</a></span>
 </body>
 </html>
