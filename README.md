@@ -7,7 +7,7 @@ Why put meta-analyses in this interactive, public format?
 -----------------------------------------------------
 Unrelated observations support This. First:
 
-1.    Wikipedia may be reaching limits with its ability to represent complicated knowledge ([details](http://www.technologyreview.com/featuredstory/520446/the-decline-of-wikipedia/)).Using ideas from [Clay Shirky: How the Internet will (one day) transform government] (http://www.ted.com/talks/clay_shirky_how_the_internet_will_one_day_transform_government.html), GitHub seems a natural method to spread medical knowledge.
+1.    Wikipedia may be reaching limits with its ability to represent complicated knowledge ([details](http://www.technologyreview.com/featuredstory/520446/the-decline-of-wikipedia/)).Using ideas from [Clay Shirky: How the Internet will (one day) transform government] (http://www.ted.com/talks/clay_shirky_how_the_internet_will_one_day_transform_government.html), GitHub seems a natural method to spread medical knowledge with the efficient use of team science.
 
 Meta-analysis is a structured method to robustly represent medical knowledge. However, meta-analyses are also encountering problems.
 
