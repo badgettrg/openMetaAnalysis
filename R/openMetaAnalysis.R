@@ -1,335 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<title>open-meta-analysis</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+openMetaAnalysis <- function(content,lefthand,righthand, type, cofactorlabel, topic, theme) {
+temp <- content
+# http://stat.ethz.ch/R-manual/R-devel/library/base/html/regex.html
+temp <- gsub('\n', '', fixed = TRUE, temp, perl = TRUE)
+#temp <- gsub("\\s+$", "", temp, perl = TRUE) #Removing trailing whitespace
+#temp <- gsub(",+$", "", temp, perl = TRUE) #Remove trailing comma if accidentally added by user online
+temp <- gsub("\t", ' ', fixed = TRUE, temp)
+temp <- gsub(',', '","', fixed = TRUE, temp)
+temp <- paste('"',temp,'"',sep = '')
+temp <- paste('Mymatrix <- matrix(c(',temp,'), ncol=6, byrow=TRUE,dimnames = list(NULL, c("Study","exp_events", "exp_total","control_events","control_total","cofactor")))')
+x<-eval(parse(file = "", n = NULL, text = temp))
+myframe <- data.frame (x)
+myframe$Study<-gsub("\'", '', fixed = TRUE, myframe$Study)
+myframe$Study<-as.character(str_trim(myframe$Study))
+myframe$exp_events<-as.numeric(as.character(str_trim(myframe$exp_events)))
+myframe$exp_total<-as.numeric(as.character(str_trim(myframe$exp_total)))
+myframe$control_events<-as.numeric(as.character(str_trim(myframe$control_events)))
+myframe$control_total<-as.numeric(as.character(str_trim(myframe$control_total)))
+myframe$cofactor<-as.numeric(as.character(str_trim(myframe$cofactor)))
+attach(myframe)
+KUBlue = "#0022B4"
+SkyBlue = "#6DC6E7"
+#par(col.axis="black" ,col.lab=KUBlue ,col.main=KUBlue ,col.sub=KUBlue, col=KUBlue,new = TRUE) #bg=SkyBlue)
 
-<script src="jquery/jquery-1.9.1.js"> </script>
-
-<!-- ocpu library -->
-<script src="opencpu/opencpu.js"> </script>
-
-<!-- some optional styling stuff -->
-<script src="bootstrap/js/bootstrap.js"> </script>
-<script src="jqueryui/jquery-ui-1.10.3.custom.js"> </script>
-
-<!-- jquery-csv from http://code.google.com/p/jquery-csv/ -->
-<script src="https://jquery-csv.googlecode.com/git/src/jquery.csv.js"></script>
-
-<!-- http://jqueryui.com/dialog/ -->
-<script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-
-<!-- Ajax.org Cloud9 Editor from http://ace.c9.io/#nav=api&api=editor -->
-<script src="src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
-
-<!-- http://www.w3schools.com/jsref/jsref_obj_regexp.asp -->
-
-<script> 
-$(document).ready(function(){
-
-$(function() {
-$( "#dialog" ).dialog();
-});
-
-    if(isAPIAvailable()) {
-      $('#files').bind('change', handleFileSelect);
-    }
-
-  //optional, requires jquery-ui.
-  $("#plotdiv").resizable()
-
-  //For Ajax.org Cloud9 Editor
-  var editor = ace.edit("editor");
-  editor.setTheme("ace/theme/github");
-  editor.getSession().setMode("ace/mode/r");
-  editor.setFontSize("14px");
-  editor.getSession().setUseWrapMode(true);
-  
-  // drawplot
-  function drawplot(){
-    $("#plotbutton").attr("disabled", "disabled")
-	temp = editor.getSession().getValue()
-	//Three replacements below are not required on a local server, but are at https://public.opencpu.org/ocpu/github/
-	temp = temp.replace(/\r?\n/g, '')
-	temp = temp.replace(/\s+$/g, '')
-	temp = temp.replace(/$\s+/g, '')
-	temp = temp.replace(/,$/g, '')
-	var req = $('#target').contents().find('#plotdiv').r_fun_plot("openMetaAnalysis", {
-	  type: $("#type").val(),
-	  cofactorlabel: $("#cofactorlabel").val(),
-	  content: temp,
-	  topic: $("#topic").val(),
-	  lefthand: $("#lefthand").val(),
-	  righthand: $("#righthand").val(),
-	  theme : $("#theme").val()
-    }).always(function(){
-      $("#plotbutton").removeAttr("disabled");
-    }).fail(function(){
-      alert("HTTP error " + req.status + ": " + req.responseText);
-    });
-  }
-
-  //button handlers
-  $("#plotbutton").on("click", function(e){
-    e.preventDefault();
-    drawplot();
-  });
-
-  $("#showeditor").on("click", function(e){
-    e.preventDefault();
-    if ($("#editorcontainer").css("display") == "none"){
-		$("#editorcontainer").css("display","block")
-		$("#target").css("display","block")
-		$("#introduction").css("display","none")
-		}
-	else {
-		$("#introduction").css("display","block")
-		$("#editorcontainer").css("display","none")
-		$("#target").css("display","none")
+if (type=="ignore")
+	{
+	meta1 <- metabin(exp_events, exp_total, control_events,control_total, data=myframe, sm="OR", method="I", studlab=paste(Study))
+	#forest(meta1, leftcols="studlab",rightcols=FALSE, xlim=c(0.1, 10),ff.hetstat="plain",col.diamond="blue", col.diamond.lines="blue",comb.fixed=FALSE,print.tau2=FALSE)
+	forest(meta1, xlim=c(0.1, 10),ff.hetstat="plain",col.diamond="blue", col.diamond.lines="blue",comb.fixed=FALSE,print.tau2=FALSE)
 	}
-  });
-
-  $("#type").on("change", function(e){
-    e.preventDefault();
-    if ($("#type").val() == "metaregression"){$("#cofactorlabel").css("display","block")}
-	else {$("#cofactorlabel").css("display","none")}
-  });
-  
-  $("#addcommas").on("click", function(e){
-    e.preventDefault();
-    temp = editor.getValue()
-	temp = temp.replace(/\n/g, ',\n')
-	temp = temp.replace(/$\s+/g, '')
-	temp = temp.replace(/\s+$/g, '')
-	temp = temp.replace(/ +/g, ', ')
-	temp = temp.replace(/\t/g, ', ')
-	temp = temp + ","
-	temp = temp.replace(/,,/g, ',')
-    editor.setValue(temp,1);
-  });
-
-  $(".example").click(function(){
-	if($(this).val()=="ex_0a") {$("#type").val("R");editor.setValue("1, 26,30, 0,\n2, 24,30, 0,\n3, 25,30, 0\n",1);}
-  });
-
-  function isAPIAvailable() {
-    // Check for the various File API support.
-    if (window.File && window.FileReader && window.FileList && window.Blob) {
-      // Great success! All the File APIs are supported.
-      return true;
-    } else {
-      // source: File API availability - http://caniuse.com/#feat=fileapi
-      // source: <output> availability - http://html5doctor.com/the-output-element/
-      document.writeln('The HTML5 APIs used in this form are only available in the following browsers:<br />');
-      // 6.0 File API & 13.0 <output>
-      document.writeln(' - Google Chrome: 13.0 or later<br />');
-      // 3.6 File API & 6.0 <output>
-      document.writeln(' - Mozilla Firefox: 6.0 or later<br />');
-      // 10.0 File API & 10.0 <output>
-      document.writeln(' - Internet Explorer: Not supported (partial support expected in 10.0)<br />');
-      // ? File API & 5.1 <output>
-      document.writeln(' - Safari: Not supported<br />');
-      // ? File API & 9.2 <output>
-      document.writeln(' - Opera: Not supported');
-      return false;
-    }
-  }
-
-  function handleFileSelect(evt) {
-    var files = evt.target.files; // FileList object
-    var file = files[0];
-
-    // read the file contents
-    printTable(file);
-
-  }
-
-  function printTable(file) {
-    var reader = new FileReader();
-    reader.readAsText(file);
-    reader.onload = function(event){
-      var csv = event.target.result;
-      var data = $.csv.toArrays(csv);
-      var html = '';
-      for(var row in data) {
-	  if($("#header").val() == "FALSE" || [row] > 0 ){
-        for(var item in data[row]) {
-          html += data[row][item] + ', ';
-        }
-        html += '\r\n';
-      }
-	  }
-      editor.setValue(html,1);
-
-    };
-    
-	reader.onerror = function(){ alert('Unable to read ' + file.fileName); };
+if (type=="subgroup")
+	{
+	meta1 <- metabin(exp_events, exp_total, control_events,control_total, data=myframe, sm="OR", method="I", studlab=paste(Study),byvar=cofactor)
+	#forest(meta1, leftcols="studlab",rightcols=FALSE, xlim=c(0.1, 10),ff.hetstat="plain",col.diamond="blue", col.diamond.lines="blue",comb.fixed=FALSE,print.tau2=FALSE)
+	forest(meta1, xlim=c(0.1, 10),ff.hetstat="plain",col.diamond="blue", col.diamond.lines="blue",comb.fixed=FALSE,print.tau2=FALSE)
 	}
-	
-  //init on start
-  //drawplot();
-  
-	//Ajax
-	//http://api.jquery.com/jQuery.getJSON/
-	//http://api.jquery.com/jQuery.ajax/
-    //$.ajax({
-		// you will need to replace this URL with the URL to your CSV file.
-		//url: '/ocpu/github/badgettrg/openMetaAnalysis/www/data.csv',
-		//dataType: 'json',
-		//done: function (data) {
-			//alert('success')
-			//printTable(data)
-		//}
-	//});
-  
-});
-</script>
-<style>
-
-#editor { 
-  position: relative;
-  width: 950px;
-  height: 225px;
+if (type=="metaregression")
+	{
+	meta1 <- meta.DSL(myframe[["exp_total"]], myframe[["control_total"]], myframe[["exp_events"]], myframe[["control_events"]],names=Study,conf.level=0.95)
+	studyweights <- 1 / (meta1$tau2 + meta1$selogs^2)
+	x <- myframe$cofactor
+	y <- meta1$logs
+	metaregression <- lm(y ~ x , data = myframe , weights = studyweights)
+	summary(metaregression)
+	plot(y ~ x, data = myframe, main=paste("Meta-regression of ", topic), xlab="", ylab="",ylim=c(-1,1),xaxs="r",xlim=c(40,130), type="n")
+	points(y ~ x,cex=10*studyweights/sum(studyweights),pch=21,bg='blue',col='blue')
+	text(x=x, y=y,labels=paste(Study), cex=0.65, pos=4,adj=0,font=1,col='black')
+	abline(h=0, v=0, col = "gray90")
+	abline(lm(y ~ x, data = myframe, weights = studyweights))
+	text(100,1,"Correlation of cofactor and odds ratio:",font=2,adj = c(0,0.5))
+	text(100,0.9,paste("All studies (" ,length(myframe$Study),"):",round(summary(metaregression)$coef[2,1],3),", p =",round(summary(metaregression)$coefficients[2,4],3)),adj = c(0,0.5))
+	mtext(side=1,line=2,paste("Cofactor",cofactorlabel), font=2)
+	mtext(side=2,line=3,"Odds ratio transformed to natural log (Ln)", font=2)
+	mtext(side=2,line=2,"(0 indicates odds ratio = 1)")
+	#mtext(side=3,line=0.5,"(Ln odds ratio below 0 favors treatment)")
+	mtext(side=1,line=3,cex=0.9,adj=0,"Notes:", font=2)
+	mtext(side=1,line=4,cex=0.9,adj=0, "1. For each study, the size of the point is its weight in the meta-regression.", font=1)
+	}
+#if(theme=="KU"){display_logo(x=1.2,y=0.05)}
 }
-    
-#plotdiv {
-  width: 1000px;
-  height: 400px;
-  border: 1px solid #e3e3e3;
-  border-radius: 4px;
-}
-
-#plotbutton{
-  width: 120px;
-  margin-left: 20px;
-}
-
-.twocolumns
-{
-columns:100px 2;
--webkit-columns:100px 2; /* Safari and Chrome */
--moz-columns:100px 2; /* Firefox */
-}
-
-</style>
-</head>
-
-<body>
-<!-- 
-http://jquery-csv.googlecode.com/git/examples/basic-usage.html
-http://jquery-csv.googlecode.com/git/examples/flot.html -> seems best and most stable without reticulating spines error
-http://code.google.com/p/jquery-csv/wiki/API -> instructions
--->
-  <div class="container" style="width:1000px;">
-
-    <div class="page-header">
-      <div style="color:#0022B4">
-	  <h1>openMetaAnalysis: <span style="font-size:50%">collaborative and continuous development</span></h1>
-	  </div>
-	<div id=""><a id="showeditor" href="#">Edit or update this analysis</a>. The use of meta-analyses in health care is hindered by analyses being outdated(<a href="#17638714">1</a>) and overlapping(<a href="#23873947">2</a>). These problems can be avoided if authors can collaborate and continually update analyses.  <a href="https://github.com/">GitHub</a> provides these functions and transparently tracks updates to meta-analyses and provides links to related , alternative, or competing, analyses. <a href="https://github.com/">GitHub</a>, originally developed for collaborative development of software, has been <a href="http://www.ted.com/talks/clay_shirky_how_the_internet_will_one_day_transform_government.html">proposed</a> as a method to publish legislative information with transparent tracking of development. Likewise, GitHub can host medical knowledge, support team science(<a href="#18619407">3</a>), and provide collaboration beyond what is possible with wikis.</div>
-	<div id="">&nbsp;</div>
-	<div>The source code for this analysis may be edited or copied and is located at a <a href="https://github.com/badgettrg/openMetaAnalysis">GitHub repository</a>.</div>
-	<div id="">&nbsp;</div>
-	  <div id="introduction">This example meta-analysis of trials of Vitamin D for the prevention of fractures suggests that Vitamin D can reduce the incidence of fractures when it is taken in effective doses that its serum raise the level by at least 20 ng/ml and achieve a final level of at least 60 ng/ml. <img src="baseline.png" style="display:inline;"/></div>
-	  </div>
-
-	  <div id="editorcontainer" style="display:none">
-      <div style="width:500px;float:left;">
-
-        <form id="paramform" target="target" style="width:500px;">
-          <fieldset style="border: 3px solid #6DC6E7; background-color: #FFFFFF;width:500px;height:580px;">
-            <legend style="font-weight:bold">Enter inputs</legend>
-            <div>To perform a <a href="https://en.wikipedia.org/wiki/Meta-analysis">meta-analysis</a>:</div>
-			<ul>
-			<li>Revise or replace the example data below as needed or</li>
-			<li>Upload a csv file formatted like this <a href="example.csv">example</a>.<br/>
-			<input type=file id=files name=files style="width:200px"/>
-			1st row is column names? <select id="header" name="header"><option value=TRUE> TRUE </option> <option value=FALSE> FALSE </option> </select>
-			</li>
-			</ul>
-<div id="">Seven columns: 1) study name, 2) events in intervention group, 3) total in intervention group, 4) events in control group, 5) total in control group, 6) cofactor. <br/>
-Separate columns with commas. <a id="addcommas" href="#">Click here</a> to add commas.</div>
-<div id="editor" style="width:500px;">Law, 24, 1762, 20, 1955, 77,
-Lips , 135, 1291, 122, 1287, 54,
-Lyons, 202, 1725, 209, 1715, 80,
-Trivedi , 43, 1345, 62, 1341, 74.3,
-Chapuy, 255, 1176, 308, 1127, 106,
-Chapuy, 97, 393, 55, 190, 77.5,
-Dawson-Hughes, 11, 187, 26, 202, 112,
-Grant, 349, 2649, 341, 2643, 62,
-Harwood, 8, 114, 5, 37, 44,
-Jackson, 2102, 18176, 2158, 18106, 61.4,
-Meyer, 69, 569, 76, 575, 64,
-Pfeifer , 3, 70, 6, 67, 66.1,
-Pfeifer , 9, 121, 16, 121, 84.5,
-Salovaara, 78, 1586, 94, 1609, 74.6,
-Sanders, 171, 1131, 135, 1125, 65,
-</div>	
-            <br />
-
-            <div>
-			<select id="type">
-              <option value="ignore" selected>Ignore cofactor/subgroup</option>
-              <option value="subgroup">Subgroup analysis</option>
-              <option value="metaregression">Meta-regression analysis</option>
-            </select>&nbsp;&nbsp;
-            <input type="text" id="cofactorlabel" value="Label for cofactor" style="display:none;width:250px;float:right"/> 
-			</div>
-			<div>&nbsp;</div>
-            <div>
-            <label>Left label:</label>
-            <select id="lefthand">
-              <option value="intervention" selected>favors intervention</option>
-              <option value="control">favors control</option>
-            </select>&nbsp;&nbsp;
-			<label>Right label:</label> 			
-            <select id="righthand">
-              <option value="intervention">favors intervention</option>
-              <option value="control"selected>favors control</option>
-            </select>
-			</div>
-            <div>
-            <label>Topic (for title - optional):</label> 
-            <input type="text" id="topic" style="float:right;width:250px"/> 
-            <select id="theme" style="display:none">
-              <option value="white" selected>None theme</option>
-              <option value="KU">KU</option>
-            </select>
-			</div> 
-            <button class="btn btn-small btn-primary" id="plotbutton"><i class="icon-ok icon-white"></i> Update Plot (below)</button>
-          </fieldset>
-        </form>
-      </div>
-      <div style="width:450px;float:right">
-	          <form name="form2" action="#" style="width:450px;">
-          <fieldset style="border: 3px solid #6DC6E7; background-color: #FFFFFF;width:450px;height:580px;">
-		  <legend style="font-weight:bold">Alternative analyses</legend>
-			<h3 style="margin-bottom:0px">Subgroups</h3>
-			<div><input type="radio" name="example" class="example" value="ex_0a" id="ex_0a" checked /><label for="ex_0a">Include all studies; no subgroups (<a href="">source data at GitHub</a>)</label></div>
-			<div><input type="radio" name="example" class="example" value="ex_0b" id="ex_0b"/><label for="ex_0b">Subgroup</label></div>
-			<h3 style="margin-bottom:0px">Meta-regressions</h3>
-			<div><input type="radio" name="example" class="example" value="ex_0c" id="ex_0c"/><label for="ex_0c">Meta-regression of final Vitamin D level</label></div>
-			<div><input type="radio" name="example" class="example" value="ex_0c" id="ex_0c"/><label for="ex_0c">Meta-regression of change in Vitamin D level</label></div>
-	  </fieldset>
-</form>
-	</div>
-	
-	<div style="clear:both">&nbsp;</div>
-	</div>
-	
-	<iframe id="target" style="width:1000px;height:600px;border: 3px solid #6DC6E7;display:none" name="target" width="700px" height="600px" src="output.html">
-	</iframe>
-<h3>References</h3>
-<div>
-<ol>
-<li><a name="23873947"></a>Siontis KC, Hernandez-Boussard T, Ioannidis JP. Overlapping meta-analyses on the same topic: survey of published studies. BMJ. 2013. doi: <a href="http://dx.doi.org/10.1136/bmj.f4501">10.1136/bmj.f4501</a>. PubMed PMID: <a href="http://pubmed.gov/23873947">23873947</a>; PubMed Central PMCID: <a href="http://pubmedcentral.gov/PMC3716360">PMC3716360</a>.</li>
-<li><a name="17638714"></a>Shojania KG, Sampson M, Ansari MT, Ji J, Doucette S, Moher D. How quickly do systematic reviews go out of date? A survival analysis. Ann Intern Med. 2007. Epub 2007 Jul 16. PubMed PMID: <a href="http://pubmed.gov/17638714">17638714</a>.</li>
-<li>Stokols D, Hall KL, Taylor BK, Moser RP. The science of team science: overview of the field and introduction to the supplement. Am J Prev Med. 2008 Aug;35(2 Suppl):S77-89. doi: <a href="http://dx.doi.org/10.1016/j.amepre.2008.05.002">10.1016/j.amepre.2008.05.002</a>. PubMed PMID: <a href="http://pubmed.gov/18619407">18619407</a>.</li>
-</ol>
-
-
-</div>
-<span style="float:right"><a href="mailto:rbadgett@kumc.edu">rbadgett@kumc.edu</a></span>
-</body>
-</html>
