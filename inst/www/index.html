@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>open-meta-analysis</title>
+<title>openMetaAnalysis</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
@@ -110,7 +110,32 @@ $( "#dialog" ).dialog();
   });
 
   $(".example").click(function(){
-	if($(this).val()=="ex_0a") {$("#type").val("R");editor.setValue("1, 26,30, 0,\n2, 24,30, 0,\n3, 25,30, 0\n",1);}
+	if($(this).val()=="ex_1a") {
+		$("#type").val("ignore");
+		$("#topic").val("Vitamin D for fracture prevention");
+		$("#cofactorlabel").css("display","none")
+		editor.setValue("Law, 24, 1762, 20, 1955, 0,\nLips , 135, 1291, 122, 1287, 0,\nLyons, 202, 1725, 209, 1715, 0,\nTrivedi , 43, 1345, 62, 1341, 0,\nChapuy, 255, 1176, 308, 1127, 0,\nChapuy, 97, 393, 55, 190, 0,\nDawson-Hughes, 11, 187, 26, 202, 0,\nGrant, 349, 2649, 341, 2643, 0,\nHarwood, 8, 114, 5, 37, 0,\nJackson, 2102, 18176, 2158, 18106, 0,\nMeyer, 69, 569, 76, 575, 0,\nPfeifer , 3, 70, 6, 67, 0,\nPfeifer , 9, 121, 16, 121, 0,\nSalovaara, 78, 1586, 94, 1609, 0,\nSanders, 171, 1131, 135, 1125, 0,",1);
+		}
+	if($(this).val()=="ex_1b") {
+		$("#type").val("subgroup");
+		$("#topic").val("Vitamin D for fracture prevention");
+		$("#cofactorlabel").css("display","none")
+		editor.setValue("Law, 24, 1762, 20, 1955, 'INeffective dose',\nLips , 135, 1291, 122, 1287, 'INeffective dose',\nLyons, 202, 1725, 209, 1715, 'Effective dose',\nTrivedi , 43, 1345, 62, 1341, 'Effective dose',\nChapuy, 255, 1176, 308, 1127, 'Effective dose',\nChapuy, 97, 393, 55, 190, 'Effective dose',\nDawson-Hughes, 11, 187, 26, 202, 'Effective dose',\nGrant, 349, 2649, 341, 2643, 'INeffective dose',\nHarwood, 8, 114, 5, 37, 'INeffective dose',\nJackson, 2102, 18176, 2158, 18106, 'INeffective dose',\nMeyer, 69, 569, 76, 575, 'INeffective dose',\nPfeifer , 3, 70, 6, 67, 'Effective dose',\nPfeifer , 9, 121, 16, 121, 'Effective dose',\nSalovaara, 78, 1586, 94, 1609, 'INeffective dose',\nSanders, 171, 1131, 135, 1125, 'INeffective dose',",1);
+		}
+	if($(this).val()=="ex_2a") {
+		$("#type").val("metaregression");
+		$("#topic").val("Vitamin D for fracture prevention");
+		$("#cofactorlabel").css("display","block")
+		$("#cofactorlabel").val("Final vitamin D level");
+		editor.setValue("Law, 24, 1762, 20, 1955, 77,\nLips , 135, 1291, 122, 1287, 54,\nLyons, 202, 1725, 209, 1715, 80,\nTrivedi , 43, 1345, 62, 1341, 74.3,\nChapuy, 255, 1176, 308, 1127, 106,\nChapuy, 97, 393, 55, 190, 77.5,\nDawson-Hughes, 11, 187, 26, 202, 112,\nGrant, 349, 2649, 341, 2643, 62,\nHarwood, 8, 114, 5, 37, 44,\nJackson, 2102, 18176, 2158, 18106, 61.4,\nMeyer, 69, 569, 76, 575, 64,\nPfeifer , 3, 70, 6, 67, 66.1,\nPfeifer , 9, 121, 16, 121, 84.5,\nSalovaara, 78, 1586, 94, 1609, 74.6,\nSanders, 171, 1131, 135, 1125, 65,\n",1);
+		}
+	if($(this).val()=="ex_2b") {
+		$("#type").val("metaregression");
+		$("#topic").val("Vitamin D for fracture prevention");
+		$("#cofactorlabel").css("display","block")
+		$("#cofactorlabel").val("Change in vitamin D level");
+		editor.setValue("Law, 24, 1762, 20, 1955, 18,\nLips , 135, 1291, 122, 1287, 27,\nLyons, 202, 1725, 209, 1715, 26,\nTrivedi , 43, 1345, 62, 1341, 20.9,\nChapuy, 255, 1176, 308, 1127, 66,\nChapuy, 97, 393, 55, 190, 56.2,\nDawson-Hughes, 11, 187, 26, 202, 35.2,\nGrant, 349, 2649, 341, 2643, 24,\nHarwood, 8, 114, 5, 37, 20.5,\nJackson, 2102, 18176, 2158, 18106, 13.4,\nMeyer, 69, 569, 76, 575, 17,\nPfeifer , 3, 70, 6, 67, 40.4,\nPfeifer , 9, 121, 16, 121, 29.1,\nSalovaara, 78, 1586, 94, 1609, 24.6,\nSanders, 171, 1131, 135, 1125, 8,\n",1);
+		}
   });
 
   function isAPIAvailable() {
@@ -190,7 +215,7 @@ $( "#dialog" ).dialog();
 #editor { 
   position: relative;
   width: 950px;
-  height: 225px;
+  height: 300px;
 }
     
 #plotdiv {
@@ -225,21 +250,27 @@ http://code.google.com/p/jquery-csv/wiki/API -> instructions
 
     <div class="page-header">
       <div style="color:#0022B4">
-	  <h1>openMetaAnalysis: <span style="font-size:50%">collaborative and continuous development</span></h1>
+	  <h1>openMetaAnalysis: <span style="font-size:50%">collaborative and continuous/span></h1>
 	  </div>
-	<div id=""><a id="showeditor" href="#">Edit or update this analysis</a>. The use of meta-analyses in health care is hindered by analyses being outdated(<a href="#17638714">1</a>) and overlapping(<a href="#23873947">2</a>). These problems can be avoided if authors can collaborate and continually update analyses.  <a href="https://github.com/">GitHub</a> provides these functions and transparently tracks updates to meta-analyses and provides links to related , alternative, or competing, analyses. <a href="https://github.com/">GitHub</a>, originally developed for collaborative development of software, has been <a href="http://www.ted.com/talks/clay_shirky_how_the_internet_will_one_day_transform_government.html">proposed</a> as a method to publish legislative information with transparent tracking of development. Likewise, GitHub can host medical knowledge, support team science(<a href="#18619407">3</a>), and provide collaboration beyond what is possible with wikis.</div>
+	<div id=""><a id="showeditor" href="#">Edit or update this analysis</a>. The use of meta-analyses in health care is hindered by analyses being outdated(<a href="#17638714">1</a>) and overlapping(<a href="#23873947">2</a>). These problems can be avoided if authors can collaborate and continually update analyses. The example in this demonstration, vitamin D supplementation for the prevention of fractures, has been said to have more meta-analyses than trials. We invite authors interested in vitamin D to revise and update the meta-analysis below. We hope this example will make it easier to do so.</div>
+	<div><a href="https://github.com/">GitHub</a>, originally developed for collaborative development of software, has been <a href="http://www.ted.com/talks/clay_shirky_how_the_internet_will_one_day_transform_government.html">proposed</a> as a method to publish legislative information with transparent tracking of development. Likewise, GitHub can host medical knowledge, support team science(<a href="#18619407">3</a>), and provide collaboration beyond what is possible with wikis. GitHub provides these functions and transparently tracks updates to meta-analyses and provides links to related, alternative, or competing, analyses. There is no reason for this analysis to ever go out of date. Anyone can revise. Similar to <a href="https://www.wikigenes.org/">wikigenes</a>, authors' contributions are tracked for academic credit. However, GitHub allows continuous, ongoing meta-analysis.</div>
+
 	<div id="">&nbsp;</div>
-	<div><span style="font-weight:bold">The source code for this analysis</span> may be edited or copied and is located at <a href="https://github.com/">GitHub</a>.You can edit the <a href="https://github.com/badgettrg/openMetaAnalysis/blob/master/inst/www/data.csv">data file</a> to revise only the analysis or edit any of the <a href="https://github.com/badgettrg/openMetaAnalysis">project files</a> to improve the display and method of analysis. Click here to see the <a href="https://github.com/badgettrg/openMetaAnalysis/pulse">history</a> of this project.</div>
+	<div><span style="font-weight:bold">The source code for this analysis</span> may be edited or copied and is located at <a href="https://github.com/">GitHub</a>.</div>
+	<ul>
+	<li>You can edit the <a href="https://github.com/badgettrg/openMetaAnalysis/blob/master/inst/www/data.csv">data file</a> to revise or update only the analysis.</li>
+	<li>You can edit any of the <a href="https://github.com/badgettrg/openMetaAnalysis">project files</a> to improve the display and method of analysis.</li>
+	<li>Click here to see the <a href="https://github.com/badgettrg/openMetaAnalysis/pulse">history</a> of this project.</li>
+	</ul>
 	
 	<div id="">&nbsp;</div>
 	  <div id="introduction"><span style="font-weight:bold">This example meta-analysis</span> of trials of Vitamin D for the prevention of fractures suggests that Vitamin D can reduce the incidence of fractures when it is taken in effective doses that its serum raise the level by at least 20 ng/ml and achieve a final level of at least 60 ng/ml. <img src="baseline.png" style="display:inline;"/></div>
 	  </div>
-
 	  <div id="editorcontainer" style="display:none">
-      <div style="width:500px;float:left;">
+      <div style="width:600px;float:left;">
 
-        <form id="paramform" target="target" style="width:500px;">
-          <fieldset style="border: 3px solid #6DC6E7; background-color: #FFFFFF;width:500px;height:580px;">
+        <form id="paramform" target="target" style="width:600px;">
+          <fieldset style="border: 3px solid #6DC6E7; background-color: #FFFFFF;width:500px;height:625px;">
             <legend style="font-weight:bold">Enter inputs</legend>
             <div>To perform a <a href="https://en.wikipedia.org/wiki/Meta-analysis">meta-analysis</a>:</div>
 			<ul>
@@ -251,21 +282,21 @@ http://code.google.com/p/jquery-csv/wiki/API -> instructions
 			</ul>
 <div id="">Seven columns: 1) study name, 2) events in intervention group, 3) total in intervention group, 4) events in control group, 5) total in control group, 6) cofactor. <br/>
 Separate columns with commas. <a id="addcommas" href="#">Click here</a> to add commas.</div>
-<div id="editor" style="width:500px;">Law, 24, 1762, 20, 1955, 77,
-Lips , 135, 1291, 122, 1287, 54,
-Lyons, 202, 1725, 209, 1715, 80,
-Trivedi , 43, 1345, 62, 1341, 74.3,
-Chapuy, 255, 1176, 308, 1127, 106,
-Chapuy, 97, 393, 55, 190, 77.5,
-Dawson-Hughes, 11, 187, 26, 202, 112,
-Grant, 349, 2649, 341, 2643, 62,
-Harwood, 8, 114, 5, 37, 44,
-Jackson, 2102, 18176, 2158, 18106, 61.4,
-Meyer, 69, 569, 76, 575, 64,
-Pfeifer , 3, 70, 6, 67, 66.1,
-Pfeifer , 9, 121, 16, 121, 84.5,
-Salovaara, 78, 1586, 94, 1609, 74.6,
-Sanders, 171, 1131, 135, 1125, 65,
+<div id="editor" style="width:600px;">Law, 24, 1762, 20, 1955, 0,
+Lips , 135, 1291, 122, 1287, 0,
+Lyons, 202, 1725, 209, 1715, 0,
+Trivedi , 43, 1345, 62, 1341, 0,
+Chapuy, 255, 1176, 308, 1127, 0,
+Chapuy, 97, 393, 55, 190, 0,
+Dawson-Hughes, 11, 187, 26, 202, 0,
+Grant, 349, 2649, 341, 2643, 0,
+Harwood, 8, 114, 5, 37, 0,
+Jackson, 2102, 18176, 2158, 18106, 0,
+Meyer, 69, 569, 76, 575, 0,
+Pfeifer , 3, 70, 6, 67, 0,
+Pfeifer , 9, 121, 16, 121, 0,
+Salovaara, 78, 1586, 94, 1609, 0,
+Sanders, 171, 1131, 135, 1125, 0,
 </div>	
             <br />
 
@@ -302,16 +333,16 @@ Sanders, 171, 1131, 135, 1125, 65,
           </fieldset>
         </form>
       </div>
-      <div style="width:450px;float:right">
-	          <form name="form2" action="#" style="width:450px;">
-          <fieldset style="border: 3px solid #6DC6E7; background-color: #FFFFFF;width:450px;height:580px;">
+      <div style="width:350px;float:right">
+	          <form name="form2" action="#" style="width:350px;">
+          <fieldset style="border: 3px solid #6DC6E7; background-color: #FFFFFF;width:350px;height:625px;">
 		  <legend style="font-weight:bold">Alternative analyses</legend>
 			<h3 style="margin-bottom:0px">Subgroups</h3>
-			<div><input type="radio" name="example" class="example" value="ex_0a" id="ex_0a" checked /><label for="ex_0a">Include all studies; no subgroups (<a href="">source data at GitHub</a>)</label></div>
-			<div><input type="radio" name="example" class="example" value="ex_0b" id="ex_0b"/><label for="ex_0b">Subgroup</label></div>
+			<div><input type="radio" name="example" class="example" value="ex_1a" id="ex_1a" checked /><label for="ex_1a">Include all studies; no subgroups (<a href="">source data at GitHub</a>)</label></div>
+			<div><input type="radio" name="example" class="example" value="ex_1b" id="ex_1b"/><label for="ex_1b">Subgroup</label></div>
 			<h3 style="margin-bottom:0px">Meta-regressions</h3>
-			<div><input type="radio" name="example" class="example" value="ex_0c" id="ex_0c"/><label for="ex_0c">Meta-regression of final Vitamin D level</label></div>
-			<div><input type="radio" name="example" class="example" value="ex_0c" id="ex_0c"/><label for="ex_0c">Meta-regression of change in Vitamin D level</label></div>
+			<div><input type="radio" name="example" class="example" value="ex_2a" id="ex_2a"/><label for="ex_2a">Meta-regression of final Vitamin D level</label></div>
+			<div><input type="radio" name="example" class="example" value="ex_2b" id="ex_2b"/><label for="ex_2b">Meta-regression of change in Vitamin D level</label></div>
 	  </fieldset>
 </form>
 	</div>
