@@ -99,7 +99,8 @@ $( "#dialog" ).dialog();
   $("#addcommas").on("click", function(e){
     e.preventDefault();
     temp = editor.getValue()
-	temp = temp.replace(/\n/g, ',\n')
+	//http://www.w3schools.com/js/js_obj_string.asp
+	temp = temp.replace(/\r/g, ',')
 	temp = temp.replace(/$\s+/g, '')
 	temp = temp.replace(/\s+$/g, '')
 	temp = temp.replace(/ +/g, ', ')
@@ -180,7 +181,7 @@ $( "#dialog" ).dialog();
       for(var row in data) {
 	  if($("#header").val() == "FALSE" || [row] > 0 ){
         for(var item in data[row]) {
-          html += data[row][item] + ', ';
+          html += data[row][item];// + ', '; //Issue? 11/16/2013
         }
         html += '\r\n';
       }
@@ -252,26 +253,30 @@ http://code.google.com/p/jquery-csv/wiki/API -> instructions
       <div style="color:#0022B4">
 	  <h1>openMetaAnalysis: <span style="font-size:50%">collaborative and continuous</span></h1>
 	  </div>
-	<div id=""><span style="font-weight:bold">Problem:</span>. The use of meta-analyses in health care is hindered by analyses being outdated(<a href="#17638714">1</a>) and overlapping(<a href="#23873947">2</a>). The example in this demonstration, vitamin D supplementation for the prevention of fractures, has been said to have more meta-analyses than trials.  These problems can be avoided if authors can collaborate and continually update analyses.</div>
+	<div id=""><span style="font-weight:bold">Problem:</span>. The use of meta-analyses in health care is hindered by analyses being outdated(<a href="#17638714">1</a>) and overlapping(<a href="#23873947">2</a>). In this <a href="https://github.com/badgettrg/Vitamin-D-for-fracture-prevention">example meta-analysis of vitamin D supplementation for the prevention of fractures</a>, has been said to have more meta-analyses than trials.  These problems can be avoided if authors can collaborate and continually update analyses.</div>
 
 	<div id="">&nbsp;</div>
 	<div><span style="font-weight:bold">Solution:</span> Collaborative and continuous meta-analysis, supported by open-source, cloud development. While wikis seem to offer a solution, they are reaching limits in their ability to represent complex knowledge.(<a href="#Simonite2013">3</a>) <a href="https://github.com/">GitHub</a>, originally developed for collaborative development of software, has been <a href="http://www.ted.com/talks/clay_shirky_how_the_internet_will_one_day_transform_government.html">proposed</a> as a method to publish legislative information with transparent tracking of development. Likewise, GitHub can host medical knowledge, support team science(<a href="#18619407">4</a>), and provide collaboration beyond what is possible with wikis. GitHub provides these functions and transparently tracks updates to meta-analyses and provides links to related, alternative, or competing, analyses. There is no reason for this analysis to ever go out of date. Anyone can revise it or copy it to make alternative analyses. Similar to <a href="https://www.wikigenes.org/">wikigenes</a>, authors' contributions are tracked for academic credit.  We invite authors interested in vitamin D to revise and update the meta-analysis below. We hope this example will make it easier to do so.</div> 
 
 	<div id="">&nbsp;</div>
-	<div><span style="font-weight:bold">Try it:</span> <a id="showeditor" href="#">Explore revisions to this analysis and immediately see the results</a>. Then, if you believe you have a meaningful contribution, use one of the following links to edit the data or source code.</div>
+	<div><span style="font-weight:bold">Try it:</span> <a id="showeditor" href="#">Explore revisions to this analysis and immediately see the results</a>. Then, if you want to contribute:</div>
 	<ul>
-	<li>Copy ('<a href="https://help.github.com/articles/fork-a-repo">fork</a>') the project, then:
+	<li>To revise this analysis or data, copy ('<a href="https://help.github.com/articles/fork-a-repo">fork</a>') the <a href="https://github.com/badgettrg/Vitamin-D-for-fracture-prevention">example meta-analysis of vitamin D supplementation for the prevention of fractures</a>, then:
 		<ul>
-		<li>Edit the <a href="https://github.com/badgettrg/openMetaAnalysis/blob/master/inst/www/data.csv">data file</a> to make revise or update only the analysis.</li>
-		<li>Edit any of the <a href="https://github.com/badgettrg/openMetaAnalysis">project files</a> to improve the display and method of analysis.</li>
-		<li>Lastly, initiate a '<a href="https://help.github.com/articles/using-pull-requests">pull request</a>' for your revisions to be pulled back into the original project.</li>
+		<li>Edit the <a href="https://github.com/badgettrg/Vitamin-D-for-fracture-prevention/tree/master/data">data files</a>. Then publish in any journal. Please cite <a href="https://github.com/badgettrg/openMetaAnalysis">openMetaAnalysis</a> in your methods.</li>  
 		</ul>
-		</li>
-	<li>Meta-analyze another topic. Copy ('<a href="https://help.github.com/articles/fork-a-repo">fork</a>') this project and replace its contents with a completely new topic.</li>
-	<li>Click here to see the <a href="https://github.com/badgettrg/openMetaAnalysis/pulse">history</a> of this project.</li>
+	</li>
+	<li>To revise the methods or display of <a href="https://github.com/badgettrg/openMetaAnalysis">openMetaAnalysis</a> itself:
+		<ul>
+		<li>Edit any of the <a href="https://github.com/badgettrg/openMetaAnalysis">repository files for openMetaAnalysis</a> to improve the display and method of analysis.</li>
+		</ul>
+	</li>
+	<li>Lastly, initiate a '<a href="https://help.github.com/articles/using-pull-requests">pull request</a>' for your revisions to be pulled back into the repository that you revised.</li>
+	<li>Meta-analyze another topic? Copy ('<a href="https://help.github.com/articles/fork-a-repo">fork</a>') the <a href="https://github.com/badgettrg/Vitamin-D-for-fracture-prevention">example meta-analysis of vitamin D supplementation for the prevention of fractures</a> and replace its contents with a completely new topic.</li>
+	<li>Click here to see the <a href="https://github.com/badgettrg/openMetaAnalysis/pulse">revision history</a> of <a href="https://github.com/badgettrg/openMetaAnalysis">openMetaAnalysis</a>.</li>
 	</ul>
 
-	  <div id="introduction"><span style="font-weight:bold">This example meta-analysis</span> of trials of Vitamin D for the prevention of fractures suggests that Vitamin D can reduce the incidence of fractures when it is taken in effective doses that its serum raise the level by at least 20 nmol/L (8 ng/mL) and achieve a final level of at least 60 nmol/L (24 ng/mL). <img src="baseline.png" style="display:inline;"/></div>
+	  <div id="introduction"><span style="font-weight:bold">This example meta-analysis</span> (<a href="https://github.com/badgettrg/Vitamin-D-for-fracture-prevention">source</a>) of trials of Vitamin D for the prevention of fractures suggests that Vitamin D can reduce the incidence of fractures when it is taken in effective doses that its serum raise the level by at least 20 nmol/L (8 ng/mL) and achieve a final level of at least 60 nmol/L (24 ng/mL). <img src="baseline.png" style="display:inline;"/></div>
 	  </div>
 	  <div id="editorcontainer" style="display:none">
       <div style="width:600px;float:left;">
