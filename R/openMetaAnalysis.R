@@ -25,8 +25,9 @@ if (type=="ignore")
 	{
 	meta1 <- metabin(exp_events, exp_total, control_events,control_total, data=myframe, sm="OR", method="I", studlab=paste(Study), title = topic)
 	#forest(meta1, leftcols="studlab",rightcols=FALSE, xlim=c(0.1, 10),ff.hetstat="plain",col.diamond="blue", col.diamond.lines="blue",comb.fixed=FALSE,print.tau2=FALSE)
-	forest(meta1, xlim=c(0.1, 10),ff.hetstat="plain",col.diamond="blue", col.diamond.lines="blue", title = topic, comb.fixed=FALSE,print.tau2=FALSE)
-	#mtext(side=3,line=3,topic, cex=1.2,font=2, adj=0)
+	forest(meta1, 1/meta1$w.random, xlim=c(0.1, 10),ff.hetstat="plain",col.diamond="blue", col.diamond.lines="blue", title = topic, comb.fixed=FALSE,print.tau2=FALSE)
+	#grid.text(topic, layout.pos.col = 2, layout.pos.row = 1, gp = gpar(fontsize = 14, fontface = "bold"))
+	grid.text(topic, 0.5, 0.97, gp = gpar(fontsize = 14, fontface = "bold"))
 	}
 if (type=="subgroup")
 	{
@@ -34,8 +35,9 @@ if (type=="subgroup")
 	myframe$cofactor<-as.character(str_trim(myframe$cofactor))
 	meta1 <- metabin(exp_events, exp_total, control_events,control_total, data=myframe, sm="OR", method="I", studlab=paste(Study), title = topic, byvar=cofactor)
 	#forest(meta1, leftcols="studlab",rightcols=FALSE, xlim=c(0.1, 10),ff.hetstat="plain",col.diamond="blue", col.diamond.lines="blue",comb.fixed=FALSE,print.tau2=FALSE)
-	forest(meta1, xlim=c(0.1, 10),ff.hetstat="plain",col.diamond="blue", col.diamond.lines="blue", title = topic, main = topic, comb.fixed=FALSE,print.tau2=FALSE)
-	#mtext(side=3,line=3,topic, cex=1.2,font=2, adj=0)
+	forest(meta1, 1/meta1$w.random, xlim=c(0.1, 10),ff.hetstat="plain",col.diamond="blue", col.diamond.lines="blue", title = topic, main = topic, comb.fixed=FALSE,print.tau2=FALSE)
+	#grid.text(topic, layout.pos.col = 2, layout.pos.row = 1, gp = gpar(fontsize = 14, fontface = "bold"))
+	grid.text(topic, 0.5, 0.97, gp = gpar(fontsize = 14, fontface = "bold"))
 	}
 if (type=="metaregression")
 	{
@@ -53,7 +55,14 @@ if (type=="metaregression")
 	legendtext = "Correlation of cofactor and odds ratio:\n"
 	legendtext = paste(legendtext,"All studies (" ,length(myframe$Study),"):",round(summary(metaregression)$coef[2,1],3),", p =",round(summary(metaregression)$coefficients[2,4],3))
 	legend("topright", legend=legendtext,lty=1, lwd = 2, inset=0.05)
-	mtext(side=1,line=2,paste("Cofactor",cofactorlabel), font=2)
+	if ( cofactorlabel != "")
+		{
+		mtext(side=1,line=2,paste("Cofactor: ",cofactorlabel), font=2)
+		}
+	else
+		{
+		mtext(side=1,line=2,"Cofactor", font=2)
+		}
 	mtext(side=2,line=3,"Odds ratio transformed to natural log (Ln)", font=2)
 	mtext(side=2,line=2,"(0 indicates odds ratio = 1)")
 	#mtext(side=3,line=0.5,"(Ln odds ratio below 0 favors treatment)")
