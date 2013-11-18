@@ -4,238 +4,37 @@
 <title>openMetaAnalysis</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-
-<script src="jquery/jquery-1.9.1.js"> </script>
-
-<!-- ocpu library -->
-<script src="opencpu/opencpu.js"> </script>
-
-<!-- some optional styling stuff -->
-<script src="bootstrap/js/bootstrap.js"> </script>
-<script src="jqueryui/jquery-ui-1.10.3.custom.js"> </script>
-
-<!-- jquery-csv from http://code.google.com/p/jquery-csv/ -->
-<script src="https://jquery-csv.googlecode.com/git/src/jquery.csv.js"></script>
-
-<!-- http://jqueryui.com/dialog/ -->
-<script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-
-<!-- Ajax.org Cloud9 Editor from http://ace.c9.io/#nav=api&api=editor -->
-<script src="src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
-
-<!-- http://www.w3schools.com/jsref/jsref_obj_regexp.asp -->
-
-<script> 
-$(document).ready(function(){
-
-$(function() {
-$( "#dialog" ).dialog();
-});
-
-    if(isAPIAvailable()) {
-      $('#files').bind('change', handleFileSelect);
-    }
-
-  //optional, requires jquery-ui.
-  $("#plotdiv").resizable()
-
-  //For Ajax.org Cloud9 Editor
-  var editor = ace.edit("editor");
-  editor.setTheme("ace/theme/github");
-  editor.getSession().setMode("ace/mode/r");
-  editor.setFontSize("14px");
-  editor.getSession().setUseWrapMode(true);
-  
-  // drawplot
-  function drawplot(){
-    $("#plotbutton").attr("disabled", "disabled")
-	temp = editor.getSession().getValue()
-	//Three replacements below are not required on a local server, but are at https://public.opencpu.org/ocpu/github/
-	temp = temp.replace(/\r?\n/g, '')
-	temp = temp.replace(/\s+$/g, '')
-	temp = temp.replace(/$\s+/g, '')
-	temp = temp.replace(/,$/g, '')
-	var req = $('#target').contents().find('#plotdiv').r_fun_plot("openMetaAnalysis", {
-	  type: $("#type").val(),
-	  cofactorlabel: $("#cofactorlabel").val(),
-	  content: temp,
-	  topic: $("#topic").val(),
-	  lefthand: $("#lefthand").val(),
-	  righthand: $("#righthand").val(),
-	  theme : $("#theme").val()
-    }).always(function(){
-      $("#plotbutton").removeAttr("disabled");
-    }).fail(function(){
-      alert("HTTP error " + req.status + ": " + req.responseText);
-    });
-  }
-
-  //button handlers
-  $("#plotbutton").on("click", function(e){
-    e.preventDefault();
-    drawplot();
-  });
-
-  $("#showeditor").on("click", function(e){
-    e.preventDefault();
-    if ($("#editorcontainer").css("display") == "none"){
-		$("#editorcontainer").css("display","block")
-		$("#target").css("display","block")
-		$("#introduction").css("display","none")
-		}
-	else {
-		$("#introduction").css("display","block")
-		$("#editorcontainer").css("display","none")
-		$("#target").css("display","none")
-	}
-  });
-
-  $("#type").on("change", function(e){
-    e.preventDefault();
-    if ($("#type").val() == "metaregression"){$("#cofactorlabel").css("display","block")}
-	else {$("#cofactorlabel").css("display","none")}
-  });
-  
-  $("#addcommas").on("click", function(e){
-    e.preventDefault();
-    temp = editor.getValue()
-	//http://www.w3schools.com/js/js_obj_string.asp
-	temp = temp.replace(/\r/g, ',')
-	temp = temp.replace(/$\s+/g, '')
-	temp = temp.replace(/\s+$/g, '')
-	temp = temp.replace(/ +/g, ', ')
-	temp = temp.replace(/\t/g, ', ')
-	temp = temp + ","
-	temp = temp.replace(/,,/g, ',')
-    editor.setValue(temp,1);
-  });
-
-  $(".example").click(function(){
-	if($(this).val()=="ex_1a") {
-		$("#type").val("ignore");
-		$("#topic").val("Vitamin D supplementation for fracture prevention");
-		$("#cofactorlabel").css("display","none")
-		editor.setValue("Law, 24, 1762, 20, 1955, 0,\nLips , 135, 1291, 122, 1287, 0,\nLyons, 202, 1725, 209, 1715, 0,\nTrivedi , 43, 1345, 62, 1341, 0,\nChapuy, 255, 1176, 308, 1127, 0,\nChapuy, 97, 393, 55, 190, 0,\nDawson-Hughes, 11, 187, 26, 202, 0,\nGrant, 349, 2649, 341, 2643, 0,\nHarwood, 8, 114, 5, 37, 0,\nJackson, 2102, 18176, 2158, 18106, 0,\nMeyer, 69, 569, 76, 575, 0,\nPfeifer , 3, 70, 6, 67, 0,\nPfeifer , 9, 121, 16, 121, 0,\nSalovaara, 78, 1586, 94, 1609, 0,\nSanders, 171, 1131, 135, 1125, 0,",1);
-		}
-	if($(this).val()=="ex_1b") {
-		$("#type").val("subgroup");
-		$("#topic").val("Vitamin D supplementation for fracture prevention");
-		$("#cofactorlabel").css("display","none")
-		editor.setValue("Law, 24, 1762, 20, 1955, 'INeffective dose',\nLips , 135, 1291, 122, 1287, 'INeffective dose',\nLyons, 202, 1725, 209, 1715, 'Effective dose',\nTrivedi , 43, 1345, 62, 1341, 'Effective dose',\nChapuy, 255, 1176, 308, 1127, 'Effective dose',\nChapuy, 97, 393, 55, 190, 'Effective dose',\nDawson-Hughes, 11, 187, 26, 202, 'Effective dose',\nGrant, 349, 2649, 341, 2643, 'INeffective dose',\nHarwood, 8, 114, 5, 37, 'INeffective dose',\nJackson, 2102, 18176, 2158, 18106, 'INeffective dose',\nMeyer, 69, 569, 76, 575, 'INeffective dose',\nPfeifer , 3, 70, 6, 67, 'Effective dose',\nPfeifer , 9, 121, 16, 121, 'Effective dose',\nSalovaara, 78, 1586, 94, 1609, 'INeffective dose',\nSanders, 171, 1131, 135, 1125, 'INeffective dose',",1);
-		}
-	if($(this).val()=="ex_2a") {
-		$("#type").val("metaregression");
-		$("#topic").val("Vitamin D supplementation for fracture prevention");
-		$("#cofactorlabel").css("display","block")
-		$("#cofactorlabel").val("Final vitamin D level");
-		editor.setValue("Law, 24, 1762, 20, 1955, 77,\nLips , 135, 1291, 122, 1287, 54,\nLyons, 202, 1725, 209, 1715, 80,\nTrivedi , 43, 1345, 62, 1341, 74.3,\nChapuy, 255, 1176, 308, 1127, 106,\nChapuy, 97, 393, 55, 190, 77.5,\nDawson-Hughes, 11, 187, 26, 202, 112,\nGrant, 349, 2649, 341, 2643, 62,\nHarwood, 8, 114, 5, 37, 44,\nJackson, 2102, 18176, 2158, 18106, 61.4,\nMeyer, 69, 569, 76, 575, 64,\nPfeifer , 3, 70, 6, 67, 66.1,\nPfeifer , 9, 121, 16, 121, 84.5,\nSalovaara, 78, 1586, 94, 1609, 74.6,\nSanders, 171, 1131, 135, 1125, 65,\n",1);
-		}
-	if($(this).val()=="ex_2b") {
-		$("#type").val("metaregression");
-		$("#topic").val("Vitamin D supplementation for fracture prevention");
-		$("#cofactorlabel").css("display","block")
-		$("#cofactorlabel").val("Change in vitamin D level");
-		editor.setValue("Law, 24, 1762, 20, 1955, 18,\nLips , 135, 1291, 122, 1287, 27,\nLyons, 202, 1725, 209, 1715, 26,\nTrivedi , 43, 1345, 62, 1341, 20.9,\nChapuy, 255, 1176, 308, 1127, 66,\nChapuy, 97, 393, 55, 190, 56.2,\nDawson-Hughes, 11, 187, 26, 202, 35.2,\nGrant, 349, 2649, 341, 2643, 24,\nHarwood, 8, 114, 5, 37, 20.5,\nJackson, 2102, 18176, 2158, 18106, 13.4,\nMeyer, 69, 569, 76, 575, 17,\nPfeifer , 3, 70, 6, 67, 40.4,\nPfeifer , 9, 121, 16, 121, 29.1,\nSalovaara, 78, 1586, 94, 1609, 24.6,\nSanders, 171, 1131, 135, 1125, 8,\n",1);
-		}
-  });
-
-  function isAPIAvailable() {
-    // Check for the various File API support.
-    if (window.File && window.FileReader && window.FileList && window.Blob) {
-      // Great success! All the File APIs are supported.
-      return true;
-    } else {
-      // source: File API availability - http://caniuse.com/#feat=fileapi
-      // source: <output> availability - http://html5doctor.com/the-output-element/
-      document.writeln('The HTML5 APIs used in this form are only available in the following browsers:<br />');
-      // 6.0 File API & 13.0 <output>
-      document.writeln(' - Google Chrome: 13.0 or later<br />');
-      // 3.6 File API & 6.0 <output>
-      document.writeln(' - Mozilla Firefox: 6.0 or later<br />');
-      // 10.0 File API & 10.0 <output>
-      document.writeln(' - Internet Explorer: Not supported (partial support expected in 10.0)<br />');
-      // ? File API & 5.1 <output>
-      document.writeln(' - Safari: Not supported<br />');
-      // ? File API & 9.2 <output>
-      document.writeln(' - Opera: Not supported');
-      return false;
-    }
-  }
-
-  function handleFileSelect(evt) {
-    var files = evt.target.files; // FileList object
-    var file = files[0];
-
-    // read the file contents
-    printTable(file);
-
-  }
-
-  function printTable(file) {
-    var reader = new FileReader();
-    reader.readAsText(file);
-    reader.onload = function(event){
-      var csv = event.target.result;
-      var data = $.csv.toArrays(csv);
-      var html = '';
-      for(var row in data) {
-	  if($("#header").val() == "FALSE" || [row] > 0 ){
-        for(var item in data[row]) {
-          html += data[row][item];// + ', '; //Issue? 11/16/2013
-        }
-        html += '\r\n';
-      }
-	  }
-      editor.setValue(html,1);
-
-    };
-    
-	reader.onerror = function(){ alert('Unable to read ' + file.fileName); };
-	}
-	
-  //init on start
-  //drawplot();
-  
-	//Ajax
-	//http://api.jquery.com/jQuery.getJSON/
-	//http://api.jquery.com/jQuery.ajax/
-    //$.ajax({
-		// you will need to replace this URL with the URL to your CSV file.
-		//url: '/ocpu/github/badgettrg/openMetaAnalysis/www/data.csv',
-		//dataType: 'json',
-		//done: function (data) {
-			//alert('success')
-			//printTable(data)
-		//}
-	//});
-  
-});
-</script>
 <style>
 
-#editor { 
-  position: relative;
-  width: 950px;
-  height: 300px;
-}
-    
-#plotdiv {
-  width: 1000px;
-  height: 400px;
-  border: 1px solid #e3e3e3;
-  border-radius: 4px;
-}
-
-#plotbutton{
-  width: 120px;
-  margin-left: 20px;
-}
-
-.twocolumns
+#menu
 {
-columns:100px 2;
--webkit-columns:100px 2; /* Safari and Chrome */
--moz-columns:100px 2; /* Firefox */
+list-style-type:none;
+margin:0;
+padding:0;
+overflow:hidden;
+} 
+
+.listitem
+{
+display:inline;
+float:left;
+}
+
+a.menuitem:link,a.menuitem:visited
+{
+display:block;
+width:150px;
+font-weight:bold;
+text-align:center;
+padding:4px;
+text-decoration:none;background-color:#6DC6E7;
+color:#FFFFFF;
+}
+
+a.menuitem:hover,a.menuitem:active
+{
+background-color:#0022B4;
+color:#FFFFFF;
 }
 
 </style>
@@ -253,117 +52,31 @@ http://code.google.com/p/jquery-csv/wiki/API -> instructions
       <div style="color:#0022B4">
 	  <h1>openMetaAnalysis: <span style="font-size:50%">collaborative and continuous</span></h1>
 	  </div>
+
+<ul id="menu">
+<li class="listitem"><a href="index.html" class="menuitem">Home</a></li>
+<li class="listitem"><a href="editor.html" class="menuitem">Editor</a></li>
+<li class="listitem"><a href="github.html" class="menuitem">Using GitHub</a></li>
+</ul> 
+<div id="">&nbsp;</div>
+
 	<div id=""><span style="font-weight:bold">Problem:</span>. The use of meta-analyses in health care is hindered by analyses being outdated(<a href="#17638714">1</a>) and overlapping(<a href="#23873947">2</a>). In this <a href="https://github.com/badgettrg/Vitamin-D-for-fracture-prevention">example meta-analysis of vitamin D supplementation for the prevention of fractures</a>, has been said to have more meta-analyses than trials.  These problems can be avoided if authors can collaborate and continually update analyses.</div>
 
 	<div id="">&nbsp;</div>
 	<div><span style="font-weight:bold">Solution:</span> Collaborative and continuous meta-analysis, supported by open-source, cloud development. While wikis also offer a solution, they are reaching limits in their ability to represent complex knowledge.(<a href="#Simonite2013">3</a>) <a href="https://github.com/">GitHub</a>, originally developed for collaborative development of software, has been <a href="http://www.ted.com/talks/clay_shirky_how_the_internet_will_one_day_transform_government.html">proposed</a> as a method to publish legislative information with transparent tracking of development. Likewise, GitHub can host medical knowledge, support team science(<a href="#18619407">4</a>), and provide collaboration beyond what is possible with wikis. GitHub transparently tracks updates to meta-analyses and provides links to related, alternative, or competing, analyses. Collaboration with GitHub complements the functions of open data repositories such as <a href="http://datadryad.org/">DRYAD</a> and <a href="http://medicine.yale.edu/core/projects/yodap/index.aspx">YODA</a>. There is no reason an open meta-anlaysis should ever go out of date. Anyone can revise it or copy it to make alternative analyses. Similar to <a href="https://www.wikigenes.org/">wikigenes</a>, authors' contributions are tracked for academic credit.  We invite authors interested in vitamin D to revise and update the meta-analysis below. We hope this example will make it easier to do so.</div> 
 
 	<div id="">&nbsp;</div>
-	<div><span style="font-weight:bold">Try it:</span> <a id="showeditor" href="#">Use the editor</a> to explore revisions to this analysis and immediately see the results. Then, you may:</div>
+	<div><span style="font-weight:bold">Try it:</span> <a href="editor.html">Use the editor</a> to explore revisions to this analysis and immediately see the results. Then, you may:</div>
 	<ul>
-	<li>Revise this analysis or data, by copying ('<a href="https://help.github.com/articles/fork-a-repo">forking</a>') the <a href="https://github.com/badgettrg/Vitamin-D-for-fracture-prevention">meta-analysis</a> to a new repository, then:
-		<ul>
-		<li>Edit the <a href="https://github.com/badgettrg/Vitamin-D-for-fracture-prevention/tree/master/data">data files</a>. Upload files to the editor and create new plots. Upload new data files and plots to your new repository. Then publish in any journal. Please cite <a href="https://github.com/badgettrg/openMetaAnalysis">openMetaAnalysis</a> in your methods.</li>  
-		</ul>
-	</li>
-	<li>To revise the methods or display of <a href="https://github.com/badgettrg/openMetaAnalysis">openMetaAnalysis</a> itself:
-		<ul>
-		<li>Edit any of the <a href="https://github.com/badgettrg/openMetaAnalysis">repository files for openMetaAnalysis</a> to improve the display and method of analysis.</li>
-		</ul>
-	</li>
-	<li>Lastly, initiate a '<a href="https://help.github.com/articles/using-pull-requests">pull request</a>' for your revisions to be pulled back into the original repository.</li>
-	<li>Meta-analyze another topic? Copy ('<a href="https://help.github.com/articles/fork-a-repo">fork</a>') the <a href="https://github.com/badgettrg/Vitamin-D-for-fracture-prevention">example meta-analysis</a> to a new repository. Replace data files with a completely new topic.  Upload new data files to editor and create new plots. Upload new data files and plots to your new repository.</li>
-	<li>Click here to see the <a href="https://github.com/badgettrg/openMetaAnalysis/pulse">revision history</a> of <a href="https://github.com/badgettrg/openMetaAnalysis">openMetaAnalysis</a>.</li>
+	<li>Revise or update(<a href="#18586179">5</a>) this analysis or data</li>
+	<li>Revise the methods or display of <a href="https://github.com/badgettrg/openMetaAnalysis">openMetaAnalysis</a> itself.</li>
+	<li>Meta-analyze another topic? Copy the <a href="https://github.com/badgettrg/Vitamin-D-for-fracture-prevention">example meta-analysis</a> to a new repository and replace contents with a new topic.</li>
 	</ul>
-
+<div id="">Details of these steps are at the <a href="github.html">Using GitHub</a> page</div>
+<div id="">&nbsp;</div>
 	  <div id="introduction"><span style="font-weight:bold">This example meta-analysis</span> (<a href="https://github.com/badgettrg/Vitamin-D-for-fracture-prevention">source</a>) of trials of Vitamin D for the prevention of fractures suggests that Vitamin D can reduce the incidence of fractures when it is taken in effective doses that its serum raise the level by at least 20 nmol/L (8 ng/mL) and achieve a final level of at least 60 nmol/L (24 ng/mL). <img src="baseline.png" style="display:inline;"/></div>
 	  </div>
-	  <div id="editorcontainer" style="display:none">
-      <div style="width:600px;float:left;">
-
-        <form id="paramform" target="target" style="width:600px;">
-          <fieldset style="border: 3px solid #6DC6E7; background-color: #FFFFFF;width:500px;height:625px;">
-            <legend style="font-weight:bold">Enter inputs</legend>
-            <div>To perform a <a href="https://en.wikipedia.org/wiki/Meta-analysis">meta-analysis</a>:</div>
-			<ul>
-			<li>Revise or replace the example data below as needed or</li>
-			<li>Upload a csv file formatted like this <a href="example.csv">example</a>.<br/>
-			<input type=file id=files name=files style="width:200px"/>
-			1st row is column names? <select id="header" name="header"><option value=TRUE> TRUE </option> <option value=FALSE> FALSE </option> </select>
-			</li>
-			</ul>
-<div id="">Seven columns: 1) study name, 2) events in intervention group, 3) total in intervention group, 4) events in control group, 5) total in control group, 6) cofactor. <br/>
-Separate columns with commas. <a id="addcommas" href="#">Click here</a> to add commas.</div>
-<div id="editor" style="width:600px;">Law, 24, 1762, 20, 1955, 0,
-Lips , 135, 1291, 122, 1287, 0,
-Lyons, 202, 1725, 209, 1715, 0,
-Trivedi , 43, 1345, 62, 1341, 0,
-Chapuy, 255, 1176, 308, 1127, 0,
-Chapuy, 97, 393, 55, 190, 0,
-Dawson-Hughes, 11, 187, 26, 202, 0,
-Grant, 349, 2649, 341, 2643, 0,
-Harwood, 8, 114, 5, 37, 0,
-Jackson, 2102, 18176, 2158, 18106, 0,
-Meyer, 69, 569, 76, 575, 0,
-Pfeifer , 3, 70, 6, 67, 0,
-Pfeifer , 9, 121, 16, 121, 0,
-Salovaara, 78, 1586, 94, 1609, 0,
-Sanders, 171, 1131, 135, 1125, 0,
-</div>	
-            <br />
-
-            <div>
-			<select id="type">
-              <option value="ignore" selected>Ignore cofactor/subgroup</option>
-              <option value="subgroup">Subgroup analysis</option>
-              <option value="metaregression">Meta-regression analysis</option>
-            </select>&nbsp;&nbsp;
-            <input type="text" id="cofactorlabel" value="Label for cofactor" style="display:none;width:250px;float:right"/> 
-			</div>
-			<div>&nbsp;</div>
-            <div>
-            <label>Left label:</label>
-            <select id="lefthand">
-              <option value="intervention" selected>favors intervention</option>
-              <option value="control">favors control</option>
-            </select>&nbsp;&nbsp;
-			<label>Right label:</label> 			
-            <select id="righthand">
-              <option value="intervention">favors intervention</option>
-              <option value="control"selected>favors control</option>
-            </select>
-			</div>
-            <div>
-            <label>Topic (for title - optional):</label> 
-            <input type="text" id="topic" style="float:right;width:250px"/> 
-            <select id="theme" style="display:none">
-              <option value="white" selected>None theme</option>
-              <option value="KU">KU</option>
-            </select>
-			</div> 
-            <button class="btn btn-small btn-primary" id="plotbutton"><i class="icon-ok icon-white"></i> Update Plot (below)</button>
-          </fieldset>
-        </form>
-      </div>
-      <div style="width:350px;float:right">
-	          <form name="form2" action="#" style="width:350px;">
-          <fieldset style="border: 3px solid #6DC6E7; background-color: #FFFFFF;width:350px;height:625px;">
-		  <legend style="font-weight:bold">Alternative analyses</legend>
-			<h3 style="margin-bottom:0px">Subgroups</h3>
-			<div><input type="radio" name="example" class="example" value="ex_1a" id="ex_1a" checked /><label for="ex_1a">Include all studies; no subgroups (<a href="">source data at GitHub</a>)</label></div>
-			<div><input type="radio" name="example" class="example" value="ex_1b" id="ex_1b"/><label for="ex_1b">Subgroup</label></div>
-			<h3 style="margin-bottom:0px">Meta-regressions</h3>
-			<div><input type="radio" name="example" class="example" value="ex_2a" id="ex_2a"/><label for="ex_2a">Meta-regression of final Vitamin D level</label></div>
-			<div><input type="radio" name="example" class="example" value="ex_2b" id="ex_2b"/><label for="ex_2b">Meta-regression of change in Vitamin D level</label></div>
-	  </fieldset>
-</form>
-	</div>
 	
-	<div style="clear:both">&nbsp;</div>
-	</div>
-	
-	<iframe id="target" style="width:1000px;height:600px;border: 3px solid #6DC6E7;display:none" name="target" width="700px" height="600px" src="output.html">
-	</iframe>
 <h3>References</h3>
 <div>
 <ol>
@@ -371,9 +84,8 @@ Sanders, 171, 1131, 135, 1125, 0,
 <li><a name="17638714" />Shojania KG, Sampson M, Ansari MT, Ji J, Doucette S, Moher D. How quickly do systematic reviews go out of date? A survival analysis. Ann Intern Med. 2007. Epub 2007 Jul 16. PubMed PMID: <a href="http://pubmed.gov/17638714">17638714</a>.</li>
 <li><a name="Simonite2013" />Simonite, T. The Decline of Wikipedia. MIT Technology Review. Oct 22, 2013. Available at <a href="http://www.technologyreview.com/featuredstory/520446/the-decline-of-wikipedia/">http://www.technologyreview.com/featuredstory/520446/the-decline-of-wikipedia/</a>. Accessed 11/16/2013</li>
 <li><a name="18619407" />Stokols D, Hall KL, Taylor BK, Moser RP. The science of team science: overview of the field and introduction to the supplement. Am J Prev Med. 2008 Aug;35(2 Suppl):S77-89. doi: <a href="http://dx.doi.org/10.1016/j.amepre.2008.05.002">10.1016/j.amepre.2008.05.002</a>. PubMed PMID: <a href="http://pubmed.gov/18619407">18619407</a>.</li>
+<li><a name="18586179" />Sampson M, Shojania KG, McGowan J, Daniel R, Rader T, Iansavichene AE, Ji J, Ansari MT, Moher D. Surveillance search techniques identified the need to update systematic reviews. J Clin Epidemiol. 2008 Aug;61(8):755-62. doi: <a href="http://dx.doi.org/10.1016/j.jclinepi.2007.10.003">10.1016/j.jclinepi.2007.10.003</a>. Epub 2008 Feb 14. PubMed PMID: <a href="http://pubmed.gov/18586179">18586179</a>.</li>
 </ol>
-
-
 </div>
 <span style="float:right"><a href="mailto:rbadgett@kumc.edu">rbadgett@kumc.edu</a></span>
 </body>
